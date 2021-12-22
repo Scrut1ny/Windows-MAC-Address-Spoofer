@@ -28,10 +28,8 @@ for /f "usebackq" %%a in (`powershell -command [BitConverter]::ToString([BitConv
 
 for /F "skip=2 tokens=2,3,4* delims=," %%a in ('"wmic nic where (NETEnabled=True) get GUID,NetconnectionID,MACAddress /format:csv"') do (set "GUID1=%%a" & set "MAC=%%b" & set "NIC=%%c")
 
-:: Retrieving current NIC GUID/UUID registry folder
+:: Retrieving current NIC GUID/UUID registry folder - Full code at the bottom
 
-:get_guid
-for /f "tokens=6 delims=\" %%A in ('reg query "HKLM\SYSTEM\ControlSet001\Control\Class" /f "%~1" /s /t REG_SZ ^| find "Class"') do set "%~2=%%A" & exit /b
 call :get_guid %GUID1% folder
 
 ::------------------------------------------------------------------------------------------------------------------
@@ -90,3 +88,6 @@ echo  ^|_^|  ^|_/_/ \_\___^| ^|___/ .__/\___/\___/_^| \___^|_^|
 echo                         ^|_^|
 echo.
 exit /b
+
+:get_guid
+for /f "tokens=6 delims=\" %%A in ('reg query "HKLM\SYSTEM\ControlSet001\Control\Class" /f "%~1" /s /t REG_SZ ^| find "Class"') do set "%~2=%%A" & exit /b
