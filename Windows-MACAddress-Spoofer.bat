@@ -14,23 +14,21 @@ setlocal EnableDelayedExpansion
 
 ::-VARIABLES--------------------------------------------------------------------------------------------------------
 
-:: Retrieving GUID/UUID
-:: for /f "skip=2 tokens=2 delims=," %%a in ('wmic nicconfig where IPEnabled^=True GET SettingID /format:csv') do for %%b in (%%a) do set GUID=%%b
-:: Must find and add your own GUID/UUID.
-for /f %%a in ('echo {4d36e972-e325-11ce-bfc1-08002be10318}') do set GUID=%%a
+:: Retrieving MACAddress Transport Name
+
+call :Transport_Name
 
 :: Generate Random MACAddress - Credit: @prsgroup > https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/creating-random-mac-addresses?CommentId=053f086f-7588-4b14-918b-7429c274671f
-for /f "usebackq" %%a in (`powershell -command [BitConverter]::ToString([BitConverter]::GetBytes((Get-Random -Maximum 0xFFFFFFFFFFFF^)^)^, 0^, 6^).Replace(^':^'^, ^'-^'^)`) do set RMAC1=%%a
-for /f "usebackq" %%a in (`powershell -command [BitConverter]::ToString([BitConverter]::GetBytes((Get-Random -Maximum 0xFFFFFFFFFFFF^)^)^, 0^, 6^).Replace(^':^'^, ^'-^'^)`) do set RMAC2=%%a
-for /f "usebackq" %%a in (`powershell -command [BitConverter]::ToString([BitConverter]::GetBytes((Get-Random -Maximum 0xFFFFFFFFFFFF^)^)^, 0^, 6^).Replace(^':^'^, ^'-^'^)`) do set RMAC3=%%a
+
+call :RMAC
 
 :: Retrieving current MACAddress, Interface Name, & GUID/UUID
 
-for /F "skip=2 tokens=2,3,4* delims=," %%a in ('"wmic nic where (NETEnabled=True) get GUID,NetconnectionID,MACAddress /format:csv"') do (set "GUID1=%%a" & set "MAC=%%b" & set "NIC=%%c")
+call :Retrieve_NIC_Info
 
 :: Retrieving current NIC GUID/UUID registry folder - Full code at the bottom
 
-call :get_guid %GUID1% folder
+call :get_guid !GUID1! folder
 
 ::------------------------------------------------------------------------------------------------------------------
 
@@ -46,14 +44,13 @@ echo  [+] CURRENT MAC  : !MAC! & echo.
 ipconfig/release >nul 2>&1
 
 :: Microsoft Kernel Debug Network Adapter
-REG ADD "HKLM\SYSTEM\ControlSet001\Control\Class\!folder!\0000" /v "NetworkAddress" /t REG_SZ /d !RMAC1! /f >nul 2>&1
+REG ADD "HKLM\SYSTEM\ControlSet001\Control\Class\!folder!\0000" /v "NetworkAddress" /t REG_SZ /d !RMAC! /f >nul 2>&1
 
 :: Actual NIC(s)
-REG ADD "HKLM\SYSTEM\ControlSet001\Control\Class\!folder!\0001" /v "NetworkAddress" /t REG_SZ /d !RMAC2! /f >nul 2>&1
-REG ADD "HKLM\SYSTEM\ControlSet001\Control\Class\!folder!\0002" /v "NetworkAddress" /t REG_SZ /d !RMAC3! /f >nul 2>&1
+REG ADD "HKLM\SYSTEM\ControlSet001\Control\Class\!folder!\0001" /v "NetworkAddress" /t REG_SZ /d !RMAC! /f >nul 2>&1
+REG ADD "HKLM\SYSTEM\ControlSet001\Control\Class\!folder!\0002" /v "NetworkAddress" /t REG_SZ /d !RMAC! /f >nul 2>&1
 
 :: Deleting OriginalNetworkAddress
-
 REG DELETE "HKLM\SYSTEM\ControlSet001\Control\Class\!folder!\0000" /v "OriginalNetworkAddress" /f >nul 2>&1
 REG DELETE "HKLM\SYSTEM\ControlSet001\Control\Class\!folder!\0001" /v "OriginalNetworkAddress" /f >nul 2>&1
 REG DELETE "HKLM\SYSTEM\ControlSet001\Control\Class\!folder!\0002" /v "OriginalNetworkAddress" /f >nul 2>&1
@@ -62,11 +59,9 @@ ipconfig/renew >nul 2>&1
 taskkill /f /im explorer.exe >nul 2>&1
 explorer.exe >nul 2>&1
 
-for /f "skip=3" %%a in ('getmac') do if not defined MAC1 set MAC1=%%a
-
 ::-----------------------------------------------------------------------------------------------------------------------------------------------
 
-echo  [+] SPOOFED MAC  : !MAC1!
+echo  [+] SPOOFED MAC  : !MAC!
 echo. & pause & cls
 
 :MENU
@@ -88,6 +83,15 @@ echo  ^|_^|  ^|_/_/ \_\___^| ^|___/ .__/\___/\___/_^| \___^|_^|
 echo                         ^|_^|
 echo.
 exit /b
+
+:RMAC
+for /f "usebackq" %%a in (`powershell -command [BitConverter]::ToString([BitConverter]::GetBytes((Get-Random -Maximum 0xFFFFFFFFFFFF^)^)^, 0^, 6^).Replace(^':^'^, ^'-^'^)`) do set RMAC=%%a
+
+:Retrieve_NIC_Info
+for /f "skip=2 tokens=2,3,4* delims=," %%a in ('"wmic nic where (NETEnabled=True) get GUID,NetconnectionID,MACAddress /format:csv"') do (set "GUID1=%%a" & set "MAC=%%b" & set "NIC=%%c")
+
+:Transport_Name
+for /f "skip=2 tokens=2 delims=," %%a in ('wmic nicconfig where IPEnabled^=True GET SettingID /format:csv') do for %%b in (%%a) do set GUID=%%b
 
 :get_guid
 for /f "tokens=6 delims=\" %%A in ('reg query "HKLM\SYSTEM\ControlSet001\Control\Class" /f "%~1" /s /t REG_SZ ^| find "Class"') do set "%~2=%%A" & exit /b
