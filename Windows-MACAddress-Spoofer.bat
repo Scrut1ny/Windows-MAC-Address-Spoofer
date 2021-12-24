@@ -1,19 +1,18 @@
 ::--------------------------------------
-:: By: 0x00 | Scrut1ny
-:: https://github.com/Scrut1ny
-:: Windows MACAddress Spoofer
-:: V5.0
+:: Author: 0x00 | Scrut1ny
+:: Project: Windows-MACAddress-Spoofer
+:: Version: 5.0
+:: Credit: @Pyprohly, @prsgroup, 
+::
+:: Link: https://github.com/Scrut1ny/Windows-MACAddress-Spoofer
 ::--------------------------------------
 
 @echo off
 cls
 setlocal EnableDelayedExpansion
 
-:: Privilege Escalation - Credit: https://stackoverflow.com/a/62668457 -----------------------------------
-
+:: Privilege Escalation - https://stackoverflow.com/a/62668457
 >nul 2>&1 net sess||(powershell saps '%0'-Verb RunAs&exit /b)
-
-::--------------------------------------------------------------------------------------------------------
 
 :START
 call :LOGO
@@ -81,7 +80,7 @@ echo                         ^|_^|
 echo.
 exit /b
 
-:: Generate Random MACAddress - Credit: @prsgroup > https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/creating-random-mac-addresses?CommentId=053f086f-7588-4b14-918b-7429c274671f
+:: Generate Random MACAddress - https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/creating-random-mac-addresses?CommentId=053f086f-7588-4b14-918b-7429c274671f
 :Random_MAC
 for /f "usebackq" %%a in (`powershell -command [BitConverter]::ToString([BitConverter]::GetBytes((Get-Random -Maximum 0xFFFFFFFFFFFF^)^)^, 0^, 6^).Replace(^':^'^, ^'-^'^)`) do set RMAC=%%a
 exit /b
