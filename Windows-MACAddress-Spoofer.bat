@@ -12,42 +12,28 @@ setlocal EnableDelayedExpansion
 >nul 2>&1 net sess||(powershell saps '%0'-Verb RunAs&exit /b)
 
 :START
-
 cls
+
 call :LOGO & call :Check_UAC & call :MENU
-
 call :MENU2
-echo  [+] CURRENT NIC  : !NetworkAdapter! & echo.
-
 call :NIC_Info
-echo  [+] CURRENT MAC  : !MAC! & echo.
-
-echo ===================================== & echo.
-
-:: Spoofing MACAddress -----------------------------------------------------------------------------------
-
-:: Default Windows Network Adapter - ClassGuid = {4d36e972-e325-11ce-bfc1-08002be10318}
-
-call :MENU2
-netsh i set i !NetworkAdapter! a=d >nul 2>&1
-
-:: Actual NIC(s)
 call :Random_MAC
 call :sub_folder
+
+cls & call :LOGO & call :Check_UAC
+
+echo  [+] SELECTED NIC : !NetworkAdapter! & echo.
+echo  [+] CURRENT MAC  : !MAC! & echo.
+
+netsh i set i !NetworkAdapter! a=d >nul 2>&1
 REG ADD "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!SUB1!" /v "NetworkAddress" /t REG_SZ /d !RMAC! /f >nul 2>&1
-
-:: Deleting OriginalNetworkAddress
 REG DELETE "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!SUB1!" /v "OriginalNetworkAddress" /f >nul 2>&1
-
-call :MENU2
 netsh i set i !NetworkAdapter! a=e >nul 2>&1
 
-::---------------------------------------------------------------------------------------------------------
+echo  [+] SPOOFED MAC  : !RMAC! & echo. & pause
 
-echo  [+] SPOOFED MAC  : !RMAC!
-echo. & pause
 call :MENU1
-  
+
 :: VARIABLES ----------------------------------------------------------------------------------------------
 
 :MENU
@@ -58,6 +44,7 @@ set /p "choice=>> "
 echo.
 for /f "skip=1" %%a in ('wmic nic get NetconnectionID') do for %%b in (%%a) do if /i "!choice!"=="%%b" goto :MENU2
 echo  [-] "!choice!" Isn't a valid option, please try again. & timeout /t 5  >nul 2>&1 & goto :START
+exit /b
 
 :MENU2
 set NetworkAdapter=!choice!
@@ -84,6 +71,8 @@ echo  ^| ^|\/^| ^|/ _ \ (__  \__ \ '_ \/ _ \/ _ \  _/ -_) '_^|
 echo  ^|_^|  ^|_/_/ \_\___^| ^|___/ .__/\___/\___/_^| \___^|_^|
 echo                         ^|_^|
 echo.
+echo  ===================================================
+echo.
 exit /b
 
 :: Generate Random MACAddress
@@ -93,7 +82,7 @@ exit /b
 
 :: Retrieving current MACAddress, Interface Name, NetCfgInstanceId
 :NIC_Info
-for /f "skip=2 tokens=2,3,4* delims=," %%a in ('"wmic nic where (NETEnabled=True) get NetconnectionID,MACAddress /format:csv"') do set MAC=%%a & set NIC=%%b)
+for /f "skip=2 tokens=2,3,4* delims=," %%a in ('"wmic nic where NetConnectionID='!NetworkAdapter!' get GUID,NetconnectionID,MACAddress /format:csv"') do set GUID=%%a set MAC=%%b & set NIC=%%c)
 exit /b
 
 :: Retrieving Caption/Index # of the NIC
