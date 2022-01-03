@@ -85,21 +85,14 @@ for /f "usebackq" %%a in (`powershell -c ('{0:x}' -f (Get-Random 0xFFFFFFFFFFFF^
 	exit /b
 )	
 
-:: Retrieving current MACAddress, Interface Name, NetCfgInstanceId
-:NIC_Info
-for /f "skip=2 tokens=2,3,4* delims=," %%a in ('"wmic nic where NetConnectionID='!NetworkAdapter!' get GUID,NetconnectionID,MACAddress /format:csv"') do (
-	set GUID=%%a
-	set MAC=%%b
-	set NIC=%%c
-	exit /b
-)
-
-:: Retrieving Caption/Index # of the NIC
-:sub_folder
-for /f "tokens=2 delims=[]" %%a in ('wmic nic where NetConnectionID^=^'!NetworkAdapter!^' get caption /value') do (
-	set SUB=%%a
-	set SUB1=!SUB:~4!
-	exit /b
+:: Retrieving current Caption/Index, MACAddress, Interface Name, NetCfgInstanceId
+: 
+for /f "tokens=2,4-5* delims=,[]" %%A in ('"wmic nic where NetConnectionId='!NetworkAdapter!' get Caption,GUID,MACAddress,NetConnectionID /format:csv"') do (
+    set "Index=%%A"
+    set "Index=!Index:~-4!"
+    set "GUID=%%B"
+    set "MAC=%%C"
+    set "NIC=%%D"
 )
 
 :: Check for administrator privilages
