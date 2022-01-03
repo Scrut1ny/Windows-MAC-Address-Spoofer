@@ -23,6 +23,7 @@ call :sub_folder
 cls & call :LOGO & call :Check_UAC
 
 echo  [+] SELECTED NIC : !NetworkAdapter! & echo.
+call :NIC_Info
 echo  [+] CURRENT MAC  : !MAC! & echo.
 
 netsh i set i !NetworkAdapter! a=d >nul 2>&1
@@ -40,11 +41,13 @@ call :MENU1
 echo  [?] Choose ^& Type a NIC & echo.
 for /f "skip=1" %%a in ('wmic nic get NetconnectionID') do for %%b in (%%a) do echo   ^> %%b
 echo.
-set /p "choice=>> "
+set /p choice=[?] 
 echo.
 for /f "skip=1" %%a in ('wmic nic get NetconnectionID') do for %%b in (%%a) do if /i "!choice!"=="%%b" goto :MENU2
 echo  [-] "!choice!" Isn't a valid option, please try again. & timeout /t 5  >nul 2>&1 & goto :START
 exit /b
+
+:: Make into 1 if loop
 
 :MENU2
 set NetworkAdapter=!choice!
@@ -53,9 +56,9 @@ exit /b
 :MENU1
 cls
 call :LOGO
-echo   [1] Run again
-echo   [2] Restart System
-echo   [3] Exit
+echo  [1] Run again
+echo  [2] Restart System
+echo  [3] Exit
 echo.
 set /p "choice=>> "
 if "%choice%"=="1" goto :START
@@ -77,18 +80,27 @@ exit /b
 
 :: Generate Random MACAddress
 :Random_MAC
-for /f "usebackq" %%a in (`powershell -c ('{0:x}' -f (Get-Random 0xFFFFFFFFFFFF^)^).padleft(12^,^"0^"^)`) do set RMAC=%%a
-exit /b
+for /f "usebackq" %%a in (`powershell -c ('{0:x}' -f (Get-Random 0xFFFFFFFFFFFF^)^).padleft(12^,^"0^"^)`) do (
+	set RMAC=%%a
+	exit /b
+)	
 
 :: Retrieving current MACAddress, Interface Name, NetCfgInstanceId
 :NIC_Info
-for /f "skip=2 tokens=2,3,4* delims=," %%a in ('"wmic nic where NetConnectionID='!NetworkAdapter!' get GUID,NetconnectionID,MACAddress /format:csv"') do set GUID=%%a set MAC=%%b & set NIC=%%c)
-exit /b
+for /f "skip=2 tokens=2,3,4* delims=," %%a in ('"wmic nic where NetConnectionID='!NetworkAdapter!' get GUID,NetconnectionID,MACAddress /format:csv"') do (
+	set GUID=%%a
+	set MAC=%%b
+	set NIC=%%c
+	exit /b
+)
 
 :: Retrieving Caption/Index # of the NIC
 :sub_folder
-for /f "tokens=2 delims=[]" %%a in ('wmic nic where NetConnectionID^=^'!NetworkAdapter!^' get caption /value') do set SUB=%%a & set SUB1=!SUB:~4!
-exit /b
+for /f "tokens=2 delims=[]" %%a in ('wmic nic where NetConnectionID^=^'!NetworkAdapter!^' get caption /value') do (
+	set SUB=%%a
+	set SUB1=!SUB:~4!
+	exit /b
+)
 
 :: Check for administrator privilages
 :Check_UAC
