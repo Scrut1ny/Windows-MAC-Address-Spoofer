@@ -8,6 +8,7 @@
 
 @echo off
 setlocal EnableDelayedExpansion
+title Windows-MACAddress-Spoofer ^| v6.0
 
 >nul 2>&1 net sess||(powershell saps '%0'-Verb RunAs&exit /b)
 
@@ -18,17 +19,18 @@ call :LOGO & call :Check_UAC & call :MENU
 call :MENU2
 call :NIC_Info
 call :Random_MAC
-call :sub_folder
 
 cls & call :LOGO & call :Check_UAC
 
 echo  [+] SELECTED NIC : !NetworkAdapter! & echo.
+
 call :NIC_Info
+
 echo  [+] CURRENT MAC  : !MAC! & echo.
 
 netsh i set i !NetworkAdapter! a=d >nul 2>&1
-REG ADD "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!SUB1!" /v "NetworkAddress" /t REG_SZ /d !RMAC! /f >nul 2>&1
-REG DELETE "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!SUB1!" /v "OriginalNetworkAddress" /f >nul 2>&1
+REG ADD "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "NetworkAddress" /t REG_SZ /d !RMAC! /f >nul 2>&1
+REG DELETE "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "OriginalNetworkAddress" /f >nul 2>&1
 netsh i set i !NetworkAdapter! a=e >nul 2>&1
 
 echo  [+] SPOOFED MAC  : !RMAC! & echo. & pause
@@ -78,15 +80,20 @@ echo  ===================================================
 echo.
 exit /b
 
+:: Check for administrator privilages
+:Check_UAC
+>nul 2>&1 NET SESSION && (echo  [+] Administrator Privileges Detected. & echo.) || (echo  [-] No Administrator Privileges Detected. & echo. & pause & exit) >nul 2>&1
+exit /b
+
 :: Generate Random MACAddress
 :Random_MAC
 for /f "usebackq" %%a in (`powershell -c ('{0:x}' -f (Get-Random 0xFFFFFFFFFFFF^)^).padleft(12^,^"0^"^)`) do (
-	set RMAC=%%a
+	set "RMAC=%%a"
 	exit /b
 )	
 
 :: Retrieving current Caption/Index, MACAddress, Interface Name, NetCfgInstanceId
-: 
+:NIC_Info
 for /f "tokens=2,4-5* delims=,[]" %%A in ('"wmic nic where NetConnectionId='!NetworkAdapter!' get Caption,GUID,MACAddress,NetConnectionID /format:csv"') do (
     set "Index=%%A"
     set "Index=!Index:~-4!"
@@ -94,7 +101,3 @@ for /f "tokens=2,4-5* delims=,[]" %%A in ('"wmic nic where NetConnectionId='!Net
     set "MAC=%%C"
     set "NIC=%%D"
 )
-
-:: Check for administrator privilages
-:Check_UAC
->nul 2>&1 NET SESSION && (echo  [+] Administrator Privileges Detected. & echo.) || (echo  [-] No Administrator Privileges Detected. & echo. & pause & exit) >nul 2>&1
