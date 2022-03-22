@@ -7,7 +7,7 @@
 ::--------------------------------------
 
 @echo off
-title Windows-MAC-Address-Spoofer ^| v6.0
+title Windows-MAC-Address-Spoofer ^| v7.0
 setlocal EnableDelayedExpansion
 mode con:cols=66 lines=17
 
@@ -20,7 +20,7 @@ fltmc >nul 2>&1 || (
     exit 0
 )
 
-:MENU
+:SELECTION
 cls&echo(&echo   [35mSelect NIC #.[0m&echo(
 set "count=0"
 for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get netconnectionid /format:csv') do (
@@ -38,30 +38,30 @@ if !nic_selection! GTR 0 (
 		for /f "delims=" %%A in ("!nic_selection!") do set "NetworkAdapter=!nic[%%A]!"
 		exit /b
 	)
-	cls&echo(&echo [31m  "!nic_selection!" invalid selection.[0m
-	>nul timeout /t 2
-	goto :MENU
-	exit /b
 )
+cls&echo(&echo [31m  "!nic_selection!" invalid selection.[0m
+>nul timeout /t 2
+goto :SELECTION
+exit /b
 
-:START
+:SPOOF
 cls&echo(
 call :NIC_Info
-call :Random_MAC
+call :RMAC
+call :SELECTION
 echo   [31m# Selected NIC :[0m !NetworkAdapter!
 echo(
 echo   [31m# Current MAC  :[0m !MAC!
 echo(
 >nul 2>&1(
 	netsh i set i !NetworkAdapter! a=d
-	reg delete "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\" /v "NetworkAddress" /f
 	reg add "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "NetworkAddress" /t REG_SZ /d "!RMAC!" /f
 	reg delete "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "OriginalNetworkAddress" /f
 	arp -d *
 	netsh i set i !NetworkAdapter! a=e
-	ipconfig/release&ipconfig/renew
+	ipconfig/release&ipconfig/renew&ipconfig/flushdns
 )
-echo   [31m# Spoofed MAC  :[0m !RMAC!&echo(&pause&(call :EXITMENU || exit /b)
+call :NIC_Info&echo   [31m# Spoofed MAC  :[0m !RMAC!&echo(&pause&(call :EXITMENU || exit /b)
 
 :EXITMENU
 cls
@@ -71,13 +71,14 @@ echo   2 - Restart System
 echo   3 - Exit
 echo(
 set /p c=".  # "
-if %c%==1 goto :START
+if %c%==1 goto :SPOOF
 if %c%==2 shutdown /r
 if %c%==3 exit /b 1
-echo Choice "%c%" isn't a valid option, please try again.&goto :MENU1&exit /b
+echo Choice "%c%" isn't a valid option, please try again.&goto :EXITMENU
+exit /b
 
 :: Generate Random MAC Address
-:Random_MAC
+:RMAC
 for /f "usebackq" %%a in (`powershell ('{0:x}' -f (Get-Random 0xFFFFFFFFFFFF^)^).padleft(12^,^"0^"^)`) do (
     set "RMAC=%%a"
     exit /b
@@ -91,5 +92,5 @@ for /f "tokens=2,4-5* delims=,[]" %%a in ('"wmic nic where NetConnectionId="!Net
     set "GUID=%%b"
     set "MAC=%%c"
     set "NIC=%%d"
+	exit /b
 )
-exit /b
