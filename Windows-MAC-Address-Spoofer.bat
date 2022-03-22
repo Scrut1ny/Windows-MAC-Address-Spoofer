@@ -36,42 +36,43 @@ set /a "nic_selection=nic_selection" %= //Super rudimentary integer validation =
 if !nic_selection! GTR 0 (
 	if !nic_selection! LEQ !count! (
 		for /f "delims=" %%A in ("!nic_selection!") do set "NetworkAdapter=!nic[%%A]!"
+		goto :SPOOF
 		exit /b
 	)
 )
 cls&echo(&echo [31m  "!nic_selection!" invalid selection.[0m
 >nul timeout /t 2
 goto :SELECTION
-exit /b
 
 :SPOOF
 cls&echo(
-call :NIC_Info
 call :RMAC
-call :SELECTION
+call :NIC_Info
 echo   [31m# Selected NIC :[0m !NetworkAdapter!
 echo(
 echo   [31m# Current MAC  :[0m !MAC!
 echo(
 >nul 2>&1(
 	netsh i set i !NetworkAdapter! a=d
-	reg add "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "NetworkAddress" /t REG_SZ /d "!RMAC!" /f
 	reg delete "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "OriginalNetworkAddress" /f
+	reg add "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "NetworkAddress" /t REG_SZ /d "!RMAC!" /f
+	reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Applets\Regedit" /va /f
+	reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Applets\Regedit" /va /f
 	arp -d *
 	netsh i set i !NetworkAdapter! a=e
 	ipconfig/release&ipconfig/renew&ipconfig/flushdns
 )
-call :NIC_Info&echo   [31m# Spoofed MAC  :[0m !RMAC!&echo(&pause&(call :EXITMENU || exit /b)
+call :NIC_Info&echo   [31m# Spoofed MAC  :[0m !RMAC!&echo(&>nul pause&(call :EXITMENU || exit /b)
 
 :EXITMENU
 cls
 echo(
-echo   1 - Run again
-echo   2 - Restart System
-echo   3 - Exit
+echo   [31m1[0m - Run again
+echo   [31m2[0m - Restart System
+echo   [31m3[0m - Exit
 echo(
-set /p c=".  # "
-if %c%==1 goto :SPOOF
+set /p c=".  [35m#[0m "
+if %c%==1 goto :SELECTION
 if %c%==2 shutdown /r
 if %c%==3 exit /b 1
 echo Choice "%c%" isn't a valid option, please try again.&goto :EXITMENU
