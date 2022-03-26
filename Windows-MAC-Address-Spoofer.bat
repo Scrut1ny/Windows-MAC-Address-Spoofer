@@ -1,7 +1,6 @@
-::--------------------------------------
-:: Author: 0x00 | Scrut1ny
+:: Author: Scrut1ny
 :: Project: Windows-MAC-Address-Spoofer
-:: Version: 6.0
+:: Version: 7.0
 ::
 :: Link: https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer
 ::--------------------------------------
@@ -46,6 +45,7 @@ goto :SELECTION
 
 :SPOOF
 cls&echo(
+call :MAC
 call :RMAC
 call :NIC_Info
 echo   [31m# Selected NIC :[0m !NetworkAdapter!
@@ -56,8 +56,6 @@ echo(
 	netsh i set i !NetworkAdapter! a=d
 	reg delete "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "OriginalNetworkAddress" /f
 	reg add "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "NetworkAddress" /t REG_SZ /d "!RMAC!" /f
-	reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Applets\Regedit" /va /f
-	reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Applets\Regedit" /va /f
 	netsh i set i !NetworkAdapter! a=e
 )
 call :NIC_Info&echo   [31m# Spoofed MAC  :[0m !RMAC!&echo(&echo   [31m#[0m Press any key to continue...&>nul pause&(call :EXITMENU || exit /b)
@@ -78,18 +76,23 @@ exit /b
 
 :: Generate Random MAC Address
 :RMAC
-for /f "usebackq" %%a in (`powershell ('{0:x}' -f (Get-Random 0xFFFFFFFFFFFF^)^).padleft(12^,^"0^"^)`) do (
-    set "RMAC=%%a"
+for /f "usebackq" %%a in (`powershell -c [BitConverter]::ToString([BitConverter]::GetBytes((Get-Random -Maximum 0xFFFFFFFFFFFF^)^)^,0^,6^).Replace(^'-^'^, ^':^'^)`) do (
+	set "RMAC=%%a"
+	exit /b
+)
+
+:: Retrieving Current MAC Address
+:MAC
+call :NIC_Info
+for /f "tokens=3" %%a in ('reg query "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" ^| find "NetworkAddress"') do (
+    set "MAC=%%a"
     exit /b
 )
 
-:: Retrieving current Caption/Index, MACAddress, Interface Name, NetCfgInstanceId
+:: Retrieving current Caption/Index
 :NIC_Info
-for /f "tokens=2,4-5* delims=,[]" %%a in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get Caption,GUID,MACAddress,NetConnectionID /format:csv | find ",""') do (
+for /f "skip=1delims=[] " %%a in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get Caption"') do (
     set "Index=%%a"
     set "Index=!Index:~-4!"
-    set "GUID=%%b"
-    set "MAC=%%c"
-    set "NIC=%%d"
 	exit /b
 )
