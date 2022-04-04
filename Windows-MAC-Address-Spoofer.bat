@@ -24,7 +24,7 @@ cls&echo(&echo   [35mSelect NIC #.[0m&echo(
 set "count=0"
 for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get netconnectionid /format:csv') do (
 	for /f "delims=" %%B in ("%%~A") do (
-		set /a count+=1
+		set /a "count+=1"
 		set "nic[!count!]=%%B"
 		echo   [31m!count![0m - %%B
 	)
@@ -45,20 +45,20 @@ goto :SELECTION
 
 :SPOOF
 cls&echo(
-call :MAC
-call :RMAC
-call :NIC_Info
+call :MAC_Recieve
+call :generateMAC
+call :NIC_Index
 echo   [31m# Selected NIC :[0m !NetworkAdapter!
 echo(
 echo   [31m# Current MAC  :[0m !MAC!
 echo(
->nul 2>&1(
+>nul 2>&1 (
 	netsh i set i !NetworkAdapter! a=d
 	reg delete "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "OriginalNetworkAddress" /f
-	reg add "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "NetworkAddress" /t REG_SZ /d "!RMAC!" /f
+	reg add "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "NetworkAddress" /t REG_SZ /d "!new_MAC!" /f
 	netsh i set i !NetworkAdapter! a=e
 )
-call :NIC_Info&echo   [31m# Spoofed MAC  :[0m !RMAC!&echo(&echo   [31m#[0m Press any key to continue...&>nul pause&(call :EXITMENU || exit /b)
+echo   [31m# Spoofed MAC  :[0m !new_MAC!&echo(&echo   [31m#[0m Press any key to continue...&>nul pause&(call :EXITMENU || exit /b)
 
 :EXITMENU
 cls
@@ -74,25 +74,40 @@ if %c%==3 exit /b 1
 cls&echo(&echo   [31mChoice "%c%": Invalid option.[0m&>nul timeout /t 2&goto :EXITMENU
 exit /b
 
-:: Generate Random MAC Address
-:RMAC
-for /f "usebackq" %%a in (`powershell -c [BitConverter]::ToString([BitConverter]::GetBytes((Get-Random -Maximum 0xFFFFFFFFFFFF^)^)^,0^,6^).Replace(^'-^'^, ^':^'^)`) do (
-	set "RMAC=%%a"
-	exit /b
+:: Generating Random MAC Address
+:generateMAC
+set "new_MAC=02"
+for /L %%A in (1,1,5) do (
+	set /a "rnd=!RANDOM!%%256"
+	call :toHex !rnd! octet
+	set "new_MAC=!new_MAC!-!octet!"
 )
+exit /b
+
+:toHex
+set /a "dec=%~1"
+set "hex="
+set "map=0123456789ABCDEF"
+for /L %%N in (1,1,8) do (
+    set /a "d=dec&15,dec>>=4"
+    for %%D in (!d!) do set "hex=!map:~%%D,1!!hex!"
+)
+set "hex=%hex:~-2%"
+endlocal & set "%~2=%hex%"
+exit /b
 
 :: Retrieving Current MAC Address
-:MAC
-call :NIC_Info
+:MAC_Recieve
+call :NIC_Index
 for /f "tokens=3" %%a in ('reg query "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" ^| find "NetworkAddress"') do (
-    set "MAC=%%a"
-    exit /b
+	set "MAC=%%a"
 )
+exit /b
 
 :: Retrieving current Caption/Index
-:NIC_Info
-for /f "skip=1delims=[] " %%a in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get Caption"') do (
+:NIC_Index
+for /f "skip=1 delims=[] " %%a in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get Caption"') do (
     set "Index=%%a"
     set "Index=!Index:~-4!"
-	exit /b
 )
+exit /b
