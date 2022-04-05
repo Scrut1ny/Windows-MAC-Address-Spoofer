@@ -1,12 +1,12 @@
 :: Author: Scrut1ny
 :: Project: Windows-MAC-Address-Spoofer
-:: Version: 7.0
+:: Version: 7.1
 ::
 :: Link: https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer
 ::--------------------------------------
 
 @echo off
-title Windows-MAC-Address-Spoofer ^| v7.0
+title Windows-MAC-Address-Spoofer ^| v7.1
 setlocal EnableDelayedExpansion
 mode con:cols=66 lines=17
 
@@ -18,6 +18,8 @@ fltmc >nul 2>&1 || (
     )
     exit 0
 )
+
+set "reg_path=HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}"
 
 :SELECTION
 cls&echo(&echo   [35mSelect NIC #.[0m&echo(
@@ -54,8 +56,8 @@ echo   [31m# Current MAC  :[0m !MAC!
 echo(
 >nul 2>&1 (
 	netsh i set i !NetworkAdapter! a=d
-	reg delete "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "OriginalNetworkAddress" /f
-	reg add "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" /v "NetworkAddress" /t REG_SZ /d "!new_MAC!" /f
+	reg delete "!reg_path!\!Index!" /v "OriginalNetworkAddress" /f
+	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!new_MAC!" /f
 	netsh i set i !NetworkAdapter! a=e
 )
 echo   [31m# Spoofed MAC  :[0m !new_MAC!&echo(&echo   [31m#[0m Press any key to continue...&>nul pause&(call :EXITMENU || exit /b)
@@ -99,15 +101,23 @@ exit /b
 :: Retrieving Current MAC Address
 :MAC_Recieve
 call :NIC_Index
-for /f "tokens=3" %%a in ('reg query "HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\!Index!" ^| find "NetworkAddress"') do (
-	set "MAC=%%a"
+for /f "tokens=3" %%a in ('reg query "!reg_path!\!Index!" ^| find "NetworkAddress"') do set "MAC=%%a"
+
+:: An unmodified MAC address will not be listed in the registry, so get the default MAC address with WMIC
+if "!MAC!"=="" (
+	set /a raw_index=1!index!-10000
+	for /f "delims=" %%A in ('"wmic nic where Index="!raw_index!" get MacAddress /format:value"') do (
+		for /f "tokens=2 delims==" %%B in ("%%~A") do set "MAC=%%B"
+	)
 )
 exit /b
 
 :: Retrieving current Caption/Index
 :NIC_Index
-for /f "skip=1 delims=[] " %%a in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get Caption"') do (
-    set "Index=%%a"
-    set "Index=!Index:~-4!"
+for /f "delims=" %%a in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get Caption /format:value"') do (
+	for /f "tokens=2 delims=[]" %%A in ("%%~a") do (
+		set "Index=%%A"
+		set "Index=!Index:~-4!"
+	)
 )
 exit /b
