@@ -3,7 +3,6 @@
 :: Version: 7.1
 ::
 :: Link: https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer
-::--------------------------------------
 
 @echo off
 title Windows-MAC-Address-Spoofer ^| v7.1
@@ -22,7 +21,7 @@ fltmc >nul 2>&1 || (
 set "reg_path=HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}"
 
 :SELECTION
-cls&echo(&echo   [35mSelect NIC #.[0m&echo(
+cls&echo(&echo   [35mSelect NIC # to spoof.[0m&echo(
 set "count=0"
 for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get netconnectionid /format:csv') do (
 	for /f "delims=" %%B in ("%%~A") do (
@@ -32,13 +31,31 @@ for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get netconnectionid /format:
 	)
 )
 echo(
+echo   [31m99[0m - Revise Networking&echo(
 set /p "nic_selection=.  [35m# [0m"
 set /a "nic_selection=nic_selection" %= //Super rudimentary integer validation =%
 if !nic_selection! GTR 0 (
-	if !nic_selection! LEQ !count! (
+	if !nic_selection! LEQ !count! (	
 		for /f "delims=" %%A in ("!nic_selection!") do set "NetworkAdapter=!nic[%%A]!"
 		goto :SPOOF
 		exit /b
+	)
+	if !nic_selection! EQU 99 (
+		cls&echo(&echo   [32mRevising networking configurations...[0m
+		>nul 2>&1(
+			ipconfig/release
+			arp -d *
+			nbtstat -R
+			nbtstat -RR
+			ipconfig/flushdns
+			ipconfig/registerdns
+			netsh winsock reset
+			net stop dps
+			del /f/s/q/a "%windir%\System32\sru\*"
+			net start dps
+			ipconfig/renew
+			goto :SELECTION
+		)
 	)
 )
 cls&echo(&echo [31m  Choice "!nic_selection!": Invalid selection.[0m
