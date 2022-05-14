@@ -137,4 +137,4 @@ for /f "delims=" %%a in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get
 		set "Index=!Index:~-4!"
 	)
 )
-exit /b
+exit /b 0
