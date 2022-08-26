@@ -1,7 +1,7 @@
 @echo off
 @shift /0
 SETLOCAL EnableDelayedExpansion
-SETLOCAL EnableExpansions
+SETLOCAL EnableExpansion
 
 title Oblivion MAC
 
