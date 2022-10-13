@@ -44,15 +44,9 @@ if !nic_selection! GTR 0 (
 		cls&echo(&echo   [32mRevising networking configurations...[0m
 		>nul 2>&1(
 			ipconfig/release
-			arp -d *
-			nbtstat -R
-			nbtstat -RR
 			ipconfig/flushdns
-			ipconfig/registerdns
 			netsh winsock reset
-			net stop dps
-			del /f/s/q/a "%windir%\System32\sru\*"
-			net start dps
+			arp -d *
 			ipconfig/renew
 			goto :SELECTION
 		)
