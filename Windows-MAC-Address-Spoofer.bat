@@ -67,6 +67,7 @@ echo   [31m# Current MAC  :[0m !MAC!
 echo(
 >nul 2>&1 (
 	netsh i set i !NetworkAdapter! a=d
+	arp -d *
 	reg delete "!reg_path!\!Index!" /v "OriginalNetworkAddress" /f
 	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!new_MAC!" /f
 	netsh i set i !NetworkAdapter! a=e
