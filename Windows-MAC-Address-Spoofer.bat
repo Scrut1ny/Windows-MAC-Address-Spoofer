@@ -150,7 +150,9 @@ for /f "tokens=1delims=[]" %%A in ('wmic nic where physicaladapter^=true get cap
 
 rem disable & enable network adapters
 
-echo Done! && pause>nul
+
+
+arp -d * rem Clear ARP/Route Tables - Contains MAC Address's used by anti-cheats to track you.
 
 :: Generating Random MAC Address
 :generateMAC
@@ -173,8 +175,6 @@ for /L %%N in (1,1,8) do (
 set "hex=%hex:~-2%"
 endlocal & set "%~2=%hex%"
 exit /b
-
-arp -d * rem Clear ARP/Route Tables - Contains MAC Address's used by anti-cheats to track you.
 
 :: ====================================================================================================
 
