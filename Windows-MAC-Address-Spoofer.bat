@@ -22,12 +22,12 @@ fltmc >nul 2>&1 || (
 
 :: Variables
 set "reg_path=HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}"
-set "count=0"
 
 
 
 :SELECTION
 :: Enumerate available NICs
+set "count=0"
 cls && echo( && echo   [35mSelect NIC # to spoof.[0m && echo(
 for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get netconnectionid /format:csv') do (
 	for /f "delims=" %%B in ("%%~A") do (
@@ -36,7 +36,7 @@ for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get netconnectionid /format:
 		echo   [31m!count![0m - %%B
 	)
 )
-:: Get user selection
+:: Recieve user selection
 echo( && echo   [31m99[0m - Revise Networking && echo(
 set /p "nic_selection=.  [35m# [0m"
 set /a "nic_selection=nic_selection" %= //Super rudimentary integer validation =%
