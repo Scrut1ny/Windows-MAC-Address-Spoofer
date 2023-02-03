@@ -79,6 +79,7 @@ cls && echo( && echo   [31m"!nic_selection!" is a invalid option.[0m && >nul t
 
 
 :EXITMENU
+set "count=0"
 cls && echo(
 echo   [31m1[0m - Run again
 echo   [31m2[0m - Restart System
