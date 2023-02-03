@@ -2,7 +2,7 @@
 ::  Windows-MAC-Address-Spoofer v8.0
 :: ==================================================
 ::  Dev  - Scut1ny
-::	Help - Mathieu, Sintrode, 
+::  Help - Mathieu, Sintrode, 
 ::  Link - https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer
 :: ==================================================
 
