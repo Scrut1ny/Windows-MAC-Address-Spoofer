@@ -1,6 +1,6 @@
 :: Author: Scrut1ny
 :: Project: Windows-MAC-Address-Spoofer
-:: Version: 7.1
+:: Version: 8.0
 ::
 :: Link: https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer
 
