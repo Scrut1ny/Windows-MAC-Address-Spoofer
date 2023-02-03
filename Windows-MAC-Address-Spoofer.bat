@@ -1,13 +1,17 @@
-:: Author: Scrut1ny
-:: Project: Windows-MAC-Address-Spoofer
-:: Version: 8.0
-::
-:: Link: https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer
+:: ==================================================
+::  Windows-MAC-Address-Spoofer v8.0
+:: ==================================================
+::  Dev  - Scut1ny
+::	Help - Mathieu, Sintrode, 
+::  Link - https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer
+:: ==================================================
+
 
 @echo off
 title Windows-MAC-Address-Spoofer ^| v8.0
 setlocal EnableDelayedExpansion
 mode con:cols=66 lines=25
+
 
 fltmc >nul 2>&1 || (
     echo(&echo   [33m# Administrator privileges are required.&echo([0m
@@ -19,10 +23,8 @@ fltmc >nul 2>&1 || (
 )
 
 
-
 :: Variables
 set "reg_path=HKLM\SYSTEM\ControlSet001\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}"
-
 
 
 :SELECTION
@@ -57,7 +59,6 @@ if !nic_selection! GTR 0 (
 goto :INVALID_SELECTION
 
 
-
 :SPOOF
 cls && echo( && call :MAC_Recieve && call :generateMAC && call :NIC_Index
 echo   [31m# Selected NIC :[0m !NetworkAdapter! && echo(
@@ -72,10 +73,8 @@ echo   [31m# Spoofed MAC  :[0m !new_MAC!
 echo( && echo   [31m#[0m Press any key to continue... && >nul pause && (call :EXITMENU || exit /b)
 
 
-
 :INVALID_SELECTION
 cls && echo( && echo   [31m"!nic_selection!" is a invalid option.[0m && >nul timeout /t 2 && goto :SELECTION
-
 
 
 :EXITMENU
@@ -89,7 +88,6 @@ if %c%==1 goto :SELECTION
 if %c%==2 shutdown /r
 if %c%==3 exit /b 1
 exit /b
-
 
 
 :: Generating Random MAC Address
@@ -114,7 +112,6 @@ set "%~2=%hex%"
 exit /b
 
 
-
 :: Retrieving Current MAC Address
 :MAC_Recieve
 call :NIC_Index
@@ -128,7 +125,6 @@ if "!MAC!"=="" (
 	)
 )
 exit /b
-
 
 
 :: Retrieving current Caption/Index
