@@ -41,7 +41,7 @@ for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get netconnectionid /format:
 :: Recieve user selection
 echo( && echo   [31m99[0m - Revise Networking && echo(
 set /p "nic_selection=.  [35m# [0m"
-set /a "nic_selection=nic_selection" %= //Super rudimentary integer validation =%
+set /a "nic_selection=nic_selection"
 if !nic_selection! GTR 0 (
 	if !nic_selection! LEQ !count! (
 		for /f "delims=" %%A in ("!nic_selection!") do set "NetworkAdapter=!nic[%%A]!"
