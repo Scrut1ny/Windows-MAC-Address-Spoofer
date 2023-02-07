@@ -120,8 +120,8 @@ for /f "tokens=3" %%a in ('reg query "!reg_path!\!Index!" ^| find "NetworkAddres
 :: An unmodified MAC address will not be listed in the registry, so get the default MAC address with WMIC.
 if "!MAC!"=="" (
 	set /a raw_index=1!index!-10000
-	for /f "delims=" %%A in ('"wmic nic where Index="!raw_index!" get MacAddress /format:value"') do (
-		for /f "tokens=2 delims==" %%B in ("%%~A") do set "MAC=%%B"
+	for /f "delims=" %%a in ('"wmic nic where Index="!raw_index!" get MacAddress /format:value"') do (
+		for /f "tokens=2 delims==" %%b in ("%%~a") do set "MAC=%%b"
 	)
 )
 exit /b
@@ -130,8 +130,8 @@ exit /b
 :: Retrieving current Caption/Index
 :NIC_Index
 for /f "delims=" %%a in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get Caption /format:value"') do (
-	for /f "tokens=2 delims=[]" %%A in ("%%~a") do (
-		set "Index=%%A"
+	for /f "tokens=2 delims=[]" %%b in ("%%~a") do (
+		set "Index=%%b"
 		set "Index=!Index:~-4!"
 	)
 )
