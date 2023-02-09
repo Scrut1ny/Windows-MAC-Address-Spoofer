@@ -91,6 +91,7 @@ exit /b
 
 
 :: Generating Random MAC Address
+:: The second character of the MAC Address needs to contain "A, E, 2, or 6" to properly work for certain NIC's. Example: xA:xx:xx:xx:xx - xE:xx:xx:xx:xx - x2:xx:xx:xx:xx - x6:xx:xx:xx:xx
 :generate_mac
 set "hex_map=0123456789ABCDEF"
 set /a first_bit=%RANDOM%%%16, second_bit=(%RANDOM%%%4)*4+2
@@ -111,9 +112,6 @@ for /l %%N in (1,1,8) do (
 set "hex=%hex:~-2%"
 set "%~2=%hex%"
 exit /b
-
-:: The second character of the MAC Address needs to contain "A, E, 2, or 6" to properly work for certain NIC's. Example: xA:xx:xx:xx:xx - xE:xx:xx:xx:xx - x2:xx:xx:xx:xx - x6:xx:xx:xx:xx
-
 
 
 :: Retrieving Current MAC Address
