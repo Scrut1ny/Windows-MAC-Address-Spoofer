@@ -107,7 +107,7 @@ set "hex="
 set /a "dec=%~1"
 for /l %%N in (1,1,8) do (
     set /a "d=dec&15,dec>>=4"
-    for %%D in (!d!) do set "hex=!map1:~%%D,1!!hex!"
+    for %%D in (!d!) do set "hex=!hex_map:~%%D,1!!hex!"
 )
 set "hex=%hex:~-2%"
 set "%~2=%hex%"
