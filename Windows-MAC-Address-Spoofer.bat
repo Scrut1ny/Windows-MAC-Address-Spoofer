@@ -49,7 +49,7 @@ if !nic_selection! GTR 0 (
 		exit /b
 	)
 	if !nic_selection! EQU 99 (
-		cls && echo( && echo   [32mRevising networking configurations...[0m
+		cls && echo( && echo   [32m# Revising networking configurations...[0m
 		>nul 2>&1(
 			ipconfig /release && ipconfig /flushdns && arp -d * && ipconfig /renew
 			goto :SELECTION
@@ -63,11 +63,11 @@ goto :INVALID_SELECTION
 cls && echo( && call :MAC_Recieve && call :generateMAC && call :NIC_Index
 echo   [31m# Selected NIC :[0m !NetworkAdapter! && echo(
 echo   [31m# Current MAC  :[0m !MAC! && echo(
-echo   [31m# Spoofed MAC  :[0m !new_MAC!
+echo   [31m# Spoofed MAC  :[0m !new_mac!
 >nul 2>&1 (
 	netsh interface set interface !NetworkAdapter! admin=disable
 	reg delete "!reg_path!\!Index!" /v "OriginalNetworkAddress" /f && arp -d *
-	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!new_MAC!" /f
+	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!new_mac!" /f
 	netsh interface set interface !NetworkAdapter! admin=enable
 )
 echo( && echo   [31m#[0m Press any key to continue... && >nul pause && (call :EXITMENU || exit /b)
@@ -91,37 +91,41 @@ exit /b
 
 
 :: Generating Random MAC Address
-:generateMAC
-set "new_MAC=02"
-for /L %%A in (1,1,5) do (
+:generate_mac
+set "hex_map=0123456789ABCDEF"
+set /a first_bit=%RANDOM%%%16, second_bit=(%RANDOM%%%4)*4+2
+set "new_mac=!hex_map:~%first_bit%,1!!hex_map:~%second_bit%,1!"
+for /l %%A in (1,1,5) do (
 	set /a "rnd=!RANDOM!%%256"
-	call :toHex !rnd! octet
-	set "new_MAC=!new_MAC!:!octet!"
+	call :to_hex !rnd! octet
+	set "new_mac=!new_mac!:!octet!"
 )
 exit /b
-:toHex
-set /a "dec=%~1"
+:to_hex
 set "hex="
-set "map=0123456789ABCDEF"
-for /L %%N in (1,1,8) do (
+set /a "dec=%~1"
+for /l %%N in (1,1,8) do (
     set /a "d=dec&15,dec>>=4"
-    for %%D in (!d!) do set "hex=!map:~%%D,1!!hex!"
+    for %%D in (!d!) do set "hex=!map1:~%%D,1!!hex!"
 )
 set "hex=%hex:~-2%"
 set "%~2=%hex%"
 exit /b
 
+:: The second character of the MAC Address needs to contain "A, E, 2, or 6" to properly work for certain NIC's. Example: xA:xx:xx:xx:xx - xE:xx:xx:xx:xx - x2:xx:xx:xx:xx - x6:xx:xx:xx:xx
+
+
 
 :: Retrieving Current MAC Address
 :MAC_Recieve
 call :NIC_Index
-for /f "tokens=3" %%a in ('reg query "!reg_path!\!Index!" ^| find "NetworkAddress"') do set "MAC=%%a"
+for /f "tokens=3" %%A in ('reg query "!reg_path!\!Index!" ^| find "NetworkAddress"') do set "MAC=%%A"
 
 :: An unmodified MAC address will not be listed in the registry, so get the default MAC address with WMIC.
 if "!MAC!"=="" (
 	set /a raw_index=1!index!-10000
-	for /f "delims=" %%a in ('"wmic nic where Index="!raw_index!" get MacAddress /format:value"') do (
-		for /f "tokens=2 delims==" %%b in ("%%~a") do set "MAC=%%b"
+	for /f "delims=" %%A in ('"wmic nic where Index="!raw_index!" get MacAddress /format:value"') do (
+		for /f "tokens=2 delims==" %%B in ("%%~A") do set "MAC=%%B"
 	)
 )
 exit /b
@@ -129,9 +133,9 @@ exit /b
 
 :: Retrieving current Caption/Index
 :NIC_Index
-for /f "delims=" %%a in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get Caption /format:value"') do (
-	for /f "tokens=2 delims=[]" %%b in ("%%~a") do (
-		set "Index=%%b"
+for /f "delims=" %%A in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get Caption /format:value"') do (
+	for /f "tokens=2 delims=[]" %%A in ("%%~A") do (
+		set "Index=%%A"
 		set "Index=!Index:~-4!"
 	)
 )
