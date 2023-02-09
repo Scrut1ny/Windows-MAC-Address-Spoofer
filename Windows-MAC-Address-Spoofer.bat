@@ -60,7 +60,7 @@ goto :INVALID_SELECTION
 
 
 :SPOOF
-cls && echo( && call :MAC_Recieve && call :generateMAC && call :NIC_Index
+cls && echo( && call :MAC_Recieve && call :generate_mac && call :NIC_Index
 echo   [31m# Selected NIC :[0m !NetworkAdapter! && echo(
 echo   [31m# Current MAC  :[0m !MAC! && echo(
 echo   [31m# Spoofed MAC  :[0m !new_mac!
