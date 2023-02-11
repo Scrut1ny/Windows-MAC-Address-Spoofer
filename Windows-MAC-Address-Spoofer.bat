@@ -65,10 +65,10 @@ echo   [31m# Selected NIC :[0m !NetworkAdapter! && echo(
 echo   [31m# Current MAC  :[0m !MAC! && echo(
 echo   [31m# Spoofed MAC  :[0m !new_mac!
 >nul 2>&1 (
-	netsh interface set interface !NetworkAdapter! admin=disable
+	netsh interface set interface "!NetworkAdapter!" admin=disable
 	reg delete "!reg_path!\!Index!" /v "OriginalNetworkAddress" /f && arp -d *
 	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!new_mac!" /f
-	netsh interface set interface !NetworkAdapter! admin=enable
+	netsh interface set interface "!NetworkAdapter!" admin=enable
 )
 echo( && echo   [31m#[0m Press any key to continue... && >nul pause && (call :EXITMENU || exit /b)
 
