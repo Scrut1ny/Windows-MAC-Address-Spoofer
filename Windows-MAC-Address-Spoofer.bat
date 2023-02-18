@@ -66,9 +66,10 @@ echo   [31m# Current MAC  :[0m !MAC! && echo(
 echo   [31m# Spoofed MAC  :[0m !new_mac!
 >nul 2>&1 (
 	netsh interface set interface "!NetworkAdapter!" admin=disable
-	reg delete "!reg_path!\!Index!" /v "OriginalNetworkAddress" /f && arp -d *
+	reg delete "!reg_path!\!Index!" /v "OriginalNetworkAddress" /f
 	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!new_mac!" /f
 	netsh interface set interface "!NetworkAdapter!" admin=enable
+	ms-settings:network-ethernet
 )
 echo( && echo   [31m#[0m Press any key to continue... && >nul pause && (call :EXITMENU || exit /b)
 
@@ -99,7 +100,7 @@ set "new_mac=!hex_map:~%first_bit%,1!!hex_map:~%second_bit%,1!"
 for /l %%A in (1,1,5) do (
 	set /a "rnd=!RANDOM!%%256"
 	call :to_hex !rnd! octet
-	set "new_mac=!new_mac!:!octet!"
+	set "new_mac=!new_mac!-!octet!"
 )
 exit /b
 :to_hex
