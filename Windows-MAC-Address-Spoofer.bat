@@ -69,7 +69,6 @@ echo   [31m# Spoofed MAC  :[0m !new_mac!
 	reg delete "!reg_path!\!Index!" /v "OriginalNetworkAddress" /f
 	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!new_mac!" /f
 	netsh interface set interface "!NetworkAdapter!" admin=enable
-	ms-settings:network-ethernet
 )
 echo( && echo   [31m#[0m Press any key to continue... && >nul pause && (call :EXITMENU || exit /b)
 
