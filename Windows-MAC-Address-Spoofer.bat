@@ -63,11 +63,11 @@ goto :INVALID_SELECTION
 cls && echo( && call :MAC_Recieve && call :generate_mac && call :NIC_Index
 echo   [31m# Selected NIC :[0m !NetworkAdapter! && echo(
 echo   [31m# Current MAC  :[0m !MAC! && echo(
-echo   [31m# Spoofed MAC  :[0m !new_mac!
+echo   [31m# Spoofed MAC  :[0m !hex_string!
 >nul 2>&1 (
 	netsh interface set interface "!NetworkAdapter!" admin=disable
 	reg delete "!reg_path!\!Index!" /v "OriginalNetworkAddress" /f
-	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!new_mac!" /f
+	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!hex_string!" /f
 	netsh interface set interface "!NetworkAdapter!" admin=enable
 )
 echo( && echo   [31m#[0m Press any key to continue... && >nul pause && (call :EXITMENU || exit /b)
@@ -93,24 +93,23 @@ exit /b
 :: Generating Random MAC Address
 :: The second character of the first octet of the MAC Address needs to contain A, E, 2, or 6 to properly function for certain wireless NIC's. Example: xA:xx:xx:xx:xx
 :generate_mac
-set "hex_map=0123456789ABCDEF"
-set /a first_bit=%RANDOM%%%16, second_bit=(%RANDOM%%%4)*4+2
-set "new_mac=!hex_map:~%first_bit%,1!!hex_map:~%second_bit%,1!"
-for /l %%A in (1,1,5) do (
-	set /a "rnd=!RANDOM!%%256"
-	call :to_hex !rnd! octet
-	set "new_mac=!new_mac!-!octet!"
+set "hex_chars=0123456789ABCDEF"
+set "valid_chars=AE26"
+set "hex_string="
+
+for /l %%i in (1,1,12) do (
+    if %%i equ 2 (
+        set /a "random_index=!random! %% 4"
+        for /f %%j in ("!random_index!") do (
+            set "hex_string=!hex_string!!valid_chars:~%%j,1!"
+        )
+    ) else (
+        set /a "random_index=!random! %% 16"
+        for /f %%j in ("!random_index!") do (
+            set "hex_string=!hex_string!!hex_chars:~%%j,1!"
+        )
+    )
 )
-exit /b
-:to_hex
-set "hex="
-set /a "dec=%~1"
-for /l %%N in (1,1,8) do (
-    set /a "d=dec&15,dec>>=4"
-    for %%D in (!d!) do set "hex=!hex_map:~%%D,1!!hex!"
-)
-set "hex=%hex:~-2%"
-set "%~2=%hex%"
 exit /b
 
 
