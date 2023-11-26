@@ -53,7 +53,7 @@ if !nic_selection! GTR 0 (
 	if !nic_selection! EQU 99 (
 		cls && echo( && echo   [32m# Revising networking configurations...[0m
 		>nul 2>&1(
-			ipconfig /release && ipconfig /flushdns && arp -d * && ipconfig /renew
+			ipconfig /release && arp -d * && ipconfig /renew
 			goto :SELECTION
 		)
 	)
