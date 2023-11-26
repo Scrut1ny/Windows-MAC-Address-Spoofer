@@ -64,7 +64,7 @@ goto :INVALID_SELECTION
 :SPOOF
 cls && echo( && call :MAC_Recieve && call :generate_mac && call :NIC_Index
 echo   [31m# Selected NIC :[0m !NetworkAdapter! && echo(
-echo   [31m# Current MAC  :[0m !MAC! && echo(
+echo   [31m# Previous MAC :[0m !MAC! && echo(
 echo   [31m# Spoofed MAC  :[0m !mac_address!
 >nul 2>&1 (
 	netsh interface set interface "!NetworkAdapter!" admin=disable
