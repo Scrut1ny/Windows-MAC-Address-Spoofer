@@ -32,7 +32,7 @@ set "reg_path=HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bf
 :SELECTION
 :: Enumerate available NICs
 set "count=0"
-cls && echo( && echo   [35mSelect NIC # to spoof.[0m && echo(
+cls && echo( && echo   [35m[i] Input NIC # to modify.[0m && echo(
 for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get netconnectionid /format:csv') do (
 	for /f "delims=" %%B in ("%%~A") do (
 		set /a "count+=1"
@@ -72,7 +72,7 @@ echo   [31m# Spoofed MAC  :[0m !mac_address!
 	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!mac_address!" /f
 	netsh interface set interface "!NetworkAdapter!" admin=enable
 )
-echo( && echo   [31m#[0m Press any key to continue... && >nul pause && (call :EXITMENU || exit /b)
+echo( && echo   [35m#[0m Press any key to continue... && >nul pause && (call :EXITMENU || exit /b)
 
 
 :INVALID_SELECTION
@@ -82,8 +82,8 @@ cls && echo( && echo   [31m"!nic_selection!" is a invalid option.[0m && >nul t
 :EXITMENU
 set "count=0"
 cls && echo(
-echo   [31m1[0m - Run again
-echo   [31m2[0m - Restart System
+echo   [31m1[0m - Selection Menu
+echo   [31m2[0m - Restart
 echo   [31m3[0m - Exit && echo(
 set /p c=".  [35m#[0m "
 if %c%==1 goto :SELECTION
