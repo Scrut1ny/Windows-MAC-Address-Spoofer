@@ -1,5 +1,5 @@
 :: ==================================================
-::  Windows-MAC-Address-Spoofer v8.0
+::  Windows-MAC-Address-Spoofer v8.3
 :: ==================================================
 ::  Dev  - Scut1ny
 ::  Help - Mathieu, Sintrode, 
@@ -8,7 +8,7 @@
 
 
 @echo off
-title Windows-MAC-Address-Spoofer ^| v8.0
+title Windows-MAC-Address-Spoofer ^| v8.3
 setlocal EnableDelayedExpansion
 mode con:cols=66 lines=25
 
