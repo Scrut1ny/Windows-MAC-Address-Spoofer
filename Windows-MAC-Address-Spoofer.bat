@@ -30,10 +30,10 @@ set "reg_path=HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bf
 
 
 :SELECTION
-:: Enumerate available NICs
+:: Enumerate available NICs - (You can use "name" or "NetConnectionId")
 set "count=0"
 cls && echo( && echo   [35m[i] Input NIC # to modify.[0m && echo(
-for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get netconnectionid /format:csv') do (
+for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get name /format:csv') do (
 	for /f "delims=" %%B in ("%%~A") do (
 		set /a "count+=1"
 		set "nic[!count!]=%%B"
@@ -117,17 +117,16 @@ for /f "tokens=3" %%A in ('reg query "!reg_path!\!Index!" ^| find "NetworkAddres
 
 :: An unmodified MAC address will not be listed in the registry, so get the default MAC address with WMIC.
 if "!MAC!"=="" (
-	set /a raw_index=1!index!-10000
-	for /f "delims=" %%A in ('"wmic nic where Index="!raw_index!" get MacAddress /format:value"') do (
+	for /f %%A in ('wmic nic where "Index='!Index!'" get MacAddress /format:value ^| find "MACAddress"') do (
 		for /f "tokens=2 delims==" %%B in ("%%~A") do set "MAC=%%B"
 	)
 )
 exit /b
 
 
-:: Retrieving current Caption/Index
+:: Retrieving current Caption/Index - (You can use "name" or "NetConnectionId")
 :NIC_Index
-for /f "delims=" %%A in ('"wmic nic where NetConnectionId="!NetworkAdapter!" get Caption /format:value"') do (
+for /f %%A in ('wmic nic where "name='!NetworkAdapter!'" get Caption /format:value ^| find "Caption"') do (
 	for /f "tokens=2 delims=[]" %%A in ("%%~A") do (
 		set "Index=%%A"
 		set "Index=!Index:~-4!"
