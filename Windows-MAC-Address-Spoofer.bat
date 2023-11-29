@@ -33,7 +33,7 @@ set "reg_path=HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bf
 :: Enumerate available NICs - (You can use "name" or "NetConnectionId")
 set "count=0"
 cls && echo( && echo   [35m[i] Input NIC # to modify.[0m && echo(
-for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get name /format:csv') do (
+for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get NetConnectionId /format:csv') do (
 	for /f "delims=" %%B in ("%%~A") do (
 		set /a "count+=1"
 		set "nic[!count!]=%%B"
@@ -126,7 +126,7 @@ exit /b
 
 :: Retrieving current Caption/Index - (You can use "name" or "NetConnectionId")
 :NIC_Index
-for /f %%A in ('wmic nic where "name='!NetworkAdapter!'" get Caption /format:value ^| find "Caption"') do (
+for /f %%A in ('wmic nic where "NetConnectionId='!NetworkAdapter!'" get Caption /format:value ^| find "Caption"') do (
 	for /f "tokens=2 delims=[]" %%A in ("%%~A") do (
 		set "Index=%%A"
 		set "Index=!Index:~-4!"
