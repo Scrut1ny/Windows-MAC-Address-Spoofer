@@ -20,8 +20,8 @@ Discoveries (links):
 > Under this class key, you'll find subkeys with numerical indices, each representing a different network adapter. For example, `HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0000` represents the first network adapter.
 >
 > Some Key Values:
->    `NetCfgInstanceId`: Contains a unique identifier for the network adapter.
->    `DriverDesc`: Provides a human-readable description or name of the network adapter.
->    `NetworkAddress`: Stores the MAC address of the network adapter.
+> - `NetCfgInstanceId`: Contains a unique identifier for the network adapter.
+> - `DriverDesc`: Provides a human-readable description or name of the network adapter.
+> - `NetworkAddress`: Stores the MAC address of the network adapter.
 
 https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/86b4c1e9-baec-4a6f-b78a-0b5c172c9dd6
