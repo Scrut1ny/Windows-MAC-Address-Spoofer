@@ -24,6 +24,6 @@ Discoveries (links):
 > - `DriverDesc`: Provides a human-readable description or name of the network adapter.
 > - `NetworkAddress`: Stores the MAC address of the network adapter.
 
-![image](https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/1ff5648c-b328-4780-8394-f123ea79740c)
+![image](https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/982813d4-da4d-4631-84c6-f9480c1dcff9)
 
 https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/86b4c1e9-baec-4a6f-b78a-0b5c172c9dd6
