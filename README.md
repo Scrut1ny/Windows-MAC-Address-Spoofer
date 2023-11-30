@@ -17,7 +17,7 @@ Discoveries (links):
 > The `{4d36e972-e325-11ce-bfc1-08002be10318}` portion of the key is a `Class Identifier (CLSID)` associated with the "Network Adapters" class in the Windows Device Manager.
 >
 > Subkeys and Indices:
-> Under this class key, you'll find subkeys with numerical indices, each representing a different network adapter. For example, `HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0000` represents the first network adapter.
+> Under this class key, you'll find subkeys with numerical indices, each representing a different network adapter also called a Index (from a Caption). For example, `HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0000` represents the first network adapter.
 >
 > Some Key Values:
 > - `NetCfgInstanceId`: Contains a unique identifier for the network adapter.
