@@ -11,21 +11,17 @@ Discoveries (links):
   - https://blog.technitium.com/2011/05/tmac-issue-with-wireless-network.html
 
 > [!NOTE]
-> In the Windows Registry, the key HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318} plays a vital role in managing and storing information related to network adapters. Each subkey within this class corresponds to a specific network adapter installed on the system.
+> In the Windows Registry, the key `HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}` plays a vital role in managing and storing information related to network adapters. Each subkey within this class corresponds to a specific network adapter installed on the system.
 >
 > Class Identifier (CLSID):
-> The {4d36e972-e325-11ce-bfc1-08002be10318} portion of the key is a Class Identifier (CLSID) associated with the "Network Adapters" class in the Windows Device Manager.
+> The `{4d36e972-e325-11ce-bfc1-08002be10318}` portion of the key is a `Class Identifier (CLSID)` associated with the "Network Adapters" class in the Windows Device Manager.
 >
 > Subkeys and Indices:
-> Under this class key, you'll find subkeys with numerical indices, each representing a different network adapter. For example, HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0000 represents the first network adapter.
+> Under this class key, you'll find subkeys with numerical indices, each representing a different network adapter. For example, `HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0000` represents the first network adapter.
 >
-> Key Values:
->    NetCfgInstanceId: Contains a unique identifier for the network adapter.
->    DriverDesc: Provides a human-readable description or name of the network adapter.
->    Service: Specifies the service name associated with the network adapter.
->    IPAddress and SubnetMask: Information related to the IP configuration of the network adapter.
->    ConnectionName: Represents the name of the network connection.
->    Device Parameters: Holds additional parameters and settings related to the network adapter's operation.
->    NetworkAddress: Stores the MAC address of the network adapter.
+> Some Key Values:
+>    `NetCfgInstanceId`: Contains a unique identifier for the network adapter.
+>    `DriverDesc`: Provides a human-readable description or name of the network adapter.
+>    `NetworkAddress`: Stores the MAC address of the network adapter.
 
 https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/86b4c1e9-baec-4a6f-b78a-0b5c172c9dd6
