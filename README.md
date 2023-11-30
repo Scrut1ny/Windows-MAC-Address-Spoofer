@@ -24,6 +24,13 @@ Discoveries (links):
 > - `DriverDesc`: Provides a human-readable description or name of the network adapter.
 > - `NetworkAddress`: Stores the MAC address of the network adapter.
 
+> [!NOTE]
+> Retrieving & displaying captions from NICs
 ![image](https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/982813d4-da4d-4631-84c6-f9480c1dcff9)
+
+> [!NOTE]
+> Showing registry subkeys (aka Indexes from a Caption) under the CLSID `{4d36e972-e325-11ce-bfc1-08002be10318}`
+![image](https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/f23873e2-1d18-4e18-8da9-6e7523a5a0a5)
+
 
 https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/86b4c1e9-baec-4a6f-b78a-0b5c172c9dd6
