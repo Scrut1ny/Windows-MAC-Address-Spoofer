@@ -30,7 +30,8 @@ Discoveries (links):
 
 > [!NOTE]
 > Showing registry subkeys (aka Indexes from a Caption) under the CLSID `{4d36e972-e325-11ce-bfc1-08002be10318}`
-![image](https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/f23873e2-1d18-4e18-8da9-6e7523a5a0a5)
+![image](https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/02dc8ed8-1bd9-43d4-8cd1-464da63a5b43)
+
 
 
 https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/86b4c1e9-baec-4a6f-b78a-0b5c172c9dd6
