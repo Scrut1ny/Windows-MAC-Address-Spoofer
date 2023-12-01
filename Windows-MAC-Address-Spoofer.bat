@@ -110,7 +110,9 @@ exit /b
 :: Retrieving Current MAC Address
 :MAC_RECIEVE
 call :NIC_INDEX
-for /f "tokens=3" %%A in ('reg query "!reg_path!\!Index!" ^| find "NetworkAddress"') do (set "MAC=%%A")
+for /f "tokens=3" %%A in ('reg query "!reg_path!\!Index!" ^| find "NetworkAddress"') do (
+	set "MAC=%%A"
+)
 
 :: An unaltered MAC address will not be present in the registry. As a result, we retrieve it using the permanent MAC address via WMIC.
 if "!MAC!"=="" (
