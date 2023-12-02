@@ -1,7 +1,9 @@
+> [!IMPORTANT]
+> Next update adds manually setting a custom MAC Address for a selected NIC!
 
 MAC address spoofing is a technique used to alter the unique identifier assigned to a network interface controller (NIC) on a device. Each NIC has a Media Access Control (MAC) address assigned by the manufacturer, which serves as a unique identifier for that device on a network. By altering the MAC address of a device, a user can effectively conceal their true identity on the network, allowing them to operate anonymously or circumvent network restrictions. This can be accomplished through the use of specialized software or manually by modifying the device's network settings.
 
-Discoveries (links):
+Research (links):
 - General technical knowledge
   - https://wikipedia.org/wiki/MAC_address
 - CurrentControlSet differences
