@@ -9,7 +9,7 @@ Research (links):
 - CurrentControlSet differences
   - https://stackoverflow.com/questions/291519/how-does-currentcontrolset-differ-from-controlset001-and-controlset002
   - https://superuser.com/questions/241426/what-are-the-differences-between-the-multiple-controlsets-in-the-windows-registr
-- Issues With Wireless NIC & Workaround
+- Issues With Windows 7 Wireless NIC & Workaround
   - https://blog.technitium.com/2011/05/tmac-issue-with-wireless-network.html
 
 > [!NOTE]
