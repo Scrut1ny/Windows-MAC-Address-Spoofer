@@ -8,10 +8,11 @@
 #						https://github.com/ammarsaa/Windows-MAC-Address-Spoofer						#
 #####################################################################################################
 
+
 # Check for admin rights
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin) {
-	Write-Host "`n# Administrator privileges are required." -f Yellow
+	Write-Host "`n  [92m# Administrator privileges are required.[0m"
 	Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
 	exit
 }
@@ -23,16 +24,16 @@ $regPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc
 
 # Function to enumerate available NICs
 function Selection-Menu {
-	Clear-Host; Write-Host "`n  [i] Input NIC # to modify.`n" -f Magenta
+	Clear-Host; Write-Host "`n  [104;97m[i][0m Input NIC # to modify.`n"
 	
 	$counter = 0
-	$nic = Get-WmiObject Win32_NetworkAdapter | Where-Object {$_.NetConnectionID -ne $null -and $_.NetConnectionStatus -eq 2} | ForEach-Object {
+	$nic = Get-WmiObject Win32_NetworkAdapter | Where-Object {$_.NetConnectionID -ne $null} | ForEach-Object {
 		$counter++
 		Write-Host "  $counter - $($_.NetConnectionID)"
 		$_.NetConnectionID
 	}
 
-	Write-Host "`n  99 "-f red -nonewline; Write-Host "- Revise Networking`n" -f white
+	Write-Host "`n  [92m99[0m - Revise Networking`n"
 	$nicSelection = Read-Host "  "
 	$nicSelection = [int]$nicSelection
 
@@ -40,7 +41,7 @@ function Selection-Menu {
 		$NetworkAdapter = $nic[$nicSelection - 1]
 		Spoof-MAC
 	} elseif ($nicSelection -eq 99) {
-		Clear-Host; Write-Host "`n  # Revising networking configurations..." -f Green
+		Clear-Host; Write-Host "`n  [92m# Revising networking configurations...[0m"
 		{
 			ipconfig /release; arp -d *; ipconfig /renew
 		} *>$null
@@ -55,11 +56,9 @@ function Selection-Menu {
 # Function to display methods to modify MAC address
 function Spoof-MAC {
 	$originalMAC = Get-MAC
-	Clear-Host; Write-Host "`n  # Selected NIC: "-f red -nonewline; Write-Host "$NetworkAdapter" -f white
-
-	Write-Host "`n  1 " -f red -nonewline; Write-Host "- Randomize MAC Address" -f white
-	Write-Host "`n  2 " -f red -nonewline; Write-Host "- Customize MAC Address" -f white
-
+	Clear-Host; Write-Host "`n  [91m# Selected NIC:[0m $NetworkAdapter"
+	Write-Host "`n  [91m1[0m - Randomize MAC Address"
+	Write-Host "`n  [91m2[0m - Customize MAC Address"
 	$choice = Read-Host "`n  "
 
 	switch ($choice) {
@@ -76,33 +75,33 @@ function Spoof-Random-MAC {
 	$nicIndex = Get-NICIndex
 
 	if (-not $nicIndex) {
-		Write-Host "`n  [!] NIC index not found. Aborting MAC spoofing." -ForegroundColor Red
+		Write-Host "`n  [101;97m[!][0m NIC index not found. Aborting MAC spoofing."
 		Exit-Menu
 	}
 	
-	Clear-Host; Write-Host "`n  > Registry Path: " -f red -nonewline; Write-Host "$regPath\$nicIndex"
-	Write-Host "`n  > Selected NIC: " -f red -nonewline; Write-Host "$NetworkAdapter" -f white
-	Write-Host "`n  > Previous MAC: " -f red -nonewline; Write-Host "$originalMAC" -f white
-	Write-Host "`n  > Modified MAC: " -f red -nonewline; Write-Host "$macAddress" -f white
+	Clear-Host; Write-Host "`n  [91m> Registry Path:[0m $regPath\$nicIndex"
+	Write-Host "`n  [91m> Selected NIC:[0m $NetworkAdapter"
+	Write-Host "`n  [91m> Previous MAC:[0m $originalMAC"
+	Write-Host "`n  [91m> Modified MAC:[0m $macAddress"
 
 	# Disable NIC, delete OriginalNetworkAddress registry entry, add NetworkAddress registry entry, enable NIC
-	Disable-NetAdapter -InterfaceAlias $NetworkAdapter -Confirm:$false
+	Disable-NetAdapter -InterfaceAlias "$NetworkAdapter" -Confirm:$false
 	$registryPath = "$regPath\$nicIndex"
 
 	if (Test-Path $registryPath) {
 		Remove-ItemProperty -Path $registryPath -Name "OriginalNetworkAddress" -ErrorAction SilentlyContinue
 
 		try {
-			Set-ItemProperty -Path $registryPath -Name "NetworkAddress" -Value $macAddress -Force
+			Set-ItemProperty -Path $registryPath -Name "NetworkAddress" -Value "$macAddress" -Force
 			Restart-Service -Force -Name "winmgmt"
 		} catch {
-			Write-Host "`n  [!] " -f Red -nonewline Write-Host "Error setting registry property: $_"
+			Write-Host "`n  [101;97m[!][0m Error setting registry property: $_"
 		}
 	} else {
-		Write-Host "`n  [!] " -f Red -nonewline Write-Host "Registry path not found: $registryPath"
+		Write-Host "`n  [101;97m[!][0m Registry path not found: $registryPath"
 	}
 
-	Enable-NetAdapter -InterfaceAlias $NetworkAdapter -Confirm:$false
+	Enable-NetAdapter -InterfaceAlias "$NetworkAdapter" -Confirm:$false
 
 	Write-Host "`n  # Press any key to continue..."
 	$null = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
@@ -114,36 +113,36 @@ function Spoof-Random-MAC {
 # Function to manually set a custom MAC address
 function Set-Custom-MAC {
 	$originalMAC = Get-MAC
-	Clear-Host; Write-Host "`n  [i] Enter a custom MAC address for `"$NetworkAdapter`" NIC. (Format: FF:FF:FF:FF:FF:FF)" -f red
+	Clear-Host; Write-Host "`n  [104;97m[i][0m Enter a custom MAC address for `"$NetworkAdapter`" NIC. (Format: FF:FF:FF:FF:FF:FF)"
 	$customMAC = Read-Host "`n  "
 
 	if ($customMAC -match '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$') {
 		$nicIndex = Get-NICIndex
 		
-		Clear-Host; Write-Host "`n  > Registry Path: " -f red -nonewline; Write-Host "$regPath\$nicIndex"
-		Write-Host "`n  > Selected NIC: " -f red -nonewline; Write-Host "$NetworkAdapter"
-		Write-Host "`n  > Previous MAC: " -f red -nonewline; Write-Host "$originalMAC"
-		Write-Host "`n  > Custom MAC: " -f red -nonewline; Write-Host "$customMAC"
+		Clear-Host; Write-Host "`n  [91m> Registry Path:[0m $regPath\$nicIndex"
+		Write-Host "`n  [91m> Selected NIC:[0m $NetworkAdapter"
+		Write-Host "`n  [91m> Previous MAC:[0m $originalMAC"
+		Write-Host "`n  [91m> Custom MAC:[0m $customMAC"
 
 		# Disable NIC, delete OriginalNetworkAddress registry entry, add NetworkAddress registry entry, enable NIC
-		Disable-NetAdapter -InterfaceAlias $NetworkAdapter -Confirm:$false
+		Disable-NetAdapter -InterfaceAlias "$NetworkAdapter" -Confirm:$false
 		Remove-ItemProperty -Path "$regPath\$nicIndex" -Name "OriginalNetworkAddress" -ErrorAction SilentlyContinue
 
 		try {
-			Set-ItemProperty -Path "$regPath\$nicIndex" -Name "NetworkAddress" -Value $customMAC -Force
+			Set-ItemProperty -Path "$regPath\$nicIndex" -Name "NetworkAddress" -Value "$customMAC" -Force
 			Restart-Service -Force -Name "winmgmt"
 		} catch {
-			Write-Host "`n  [!] " -f Red -nonewline Write-Host "Error setting registry property: $_"
+			Write-Host "`n  [101;97m[!][0m Error setting registry property: $_"
 		}
 
-		Enable-NetAdapter -InterfaceAlias $NetworkAdapter -Confirm:$false
+		Enable-NetAdapter -InterfaceAlias "$NetworkAdapter" -Confirm:$false
 
 		Write-Host "`n  # Press any key to continue..."
 		$null = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 
 		Exit-Menu
 	} else {
-		Clear-Host; Write-Host "`n  [!] Invalid MAC address format. Please enter a valid MAC address." -f Red
+		Clear-Host; Write-Host "`n  [101;97m[!][0m Invalid MAC address format. Please enter a valid MAC address."
 		Start-Sleep -Seconds 3
 		Set-Custom-MAC
 	}
@@ -190,7 +189,7 @@ function Get-NICIndex {
 
 # Function to handle invalid selection
 function Invalid-Selection {
-	Clear-Host; Write-Host "`n  # Invalid selection. Please choose a valid option." -f Red
+	Clear-Host; Write-Host "`n  [101;97m[!][0m Invalid selection, please choose a valid option."
 	Start-Sleep -Seconds 2
 	Selection-Menu
 }
@@ -198,9 +197,9 @@ function Invalid-Selection {
 
 # Function to display exit menu
 function Exit-Menu {
-	Clear-Host; Write-Host "`n  1 " -f red -nonewline; Write-Host "- Selection Menu" -f white
-	Write-Host "  2 " -f red -nonewline; Write-Host "- Restart Device" -f white
-	Write-Host "  3 " -f red -nonewline; Write-Host "- Exit`n" -f white
+	Clear-Host; Write-Host "`n  [91m1[0m - Selection Menu"
+	Write-Host "  [91m2[0m - Restart Device"
+	Write-Host "  [91m3[0m - Exit`n"
 	$choice = Read-Host "  "
 
 	switch ($choice) {
