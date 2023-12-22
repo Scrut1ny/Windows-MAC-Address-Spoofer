@@ -71,7 +71,7 @@ function Spoof-MAC {
 
 # Function to spoof a random MAC address
 function Spoof-Random-MAC {
-	$macAddress = Generate-MAC
+	$randomMac = Generate-MAC
 	$nicIndex = Get-NICIndex
 
 	if (-not $nicIndex) {
@@ -82,17 +82,17 @@ function Spoof-Random-MAC {
 	Clear-Host; Write-Host "`n  [91m> Registry Path:[0m $regPath\$nicIndex"
 	Write-Host "`n  [91m> Selected NIC:[0m $NetworkAdapter"
 	Write-Host "`n  [91m> Previous MAC:[0m $originalMAC"
-	Write-Host "`n  [91m> Modified MAC:[0m $macAddress"
+	Write-Host "`n  [91m> Modified MAC:[0m $randomMac"
 
 	# Disable NIC, delete OriginalNetworkAddress registry entry, add NetworkAddress registry entry, enable NIC
 	Disable-NetAdapter -InterfaceAlias "$NetworkAdapter" -Confirm:$false
 	$registryPath = "$regPath\$nicIndex"
 
 	if (Test-Path $registryPath) {
-		Remove-ItemProperty -Path $registryPath -Name "OriginalNetworkAddress" -ErrorAction SilentlyContinue
+		Remove-ItemProperty -Path "$registryPath" -Name "OriginalNetworkAddress" -ErrorAction SilentlyContinue
 
 		try {
-			Set-ItemProperty -Path $registryPath -Name "NetworkAddress" -Value "$macAddress" -Force
+			Set-ItemProperty -Path "$registryPath" -Name "NetworkAddress" -Value "$randomMac" -Force
 			Restart-Service -Force -Name "winmgmt"
 		} catch {
 			Write-Host "`n  [101;97m[!][0m Error setting registry property: $_"
@@ -155,7 +155,7 @@ function Get-MAC {
 	$macAddress = (Get-ItemProperty -Path "$regPath\$nicIndex" -Name "NetworkAddress" -ErrorAction SilentlyContinue).NetworkAddress
 
 	if (-not $macAddress) {
-		$macAddress = (Get-WmiObject -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionId -eq $NetworkAdapter }).MacAddress
+		$macAddress = (Get-WmiObject -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionId -eq "$NetworkAdapter" }).MacAddress
 	}
 
 	return $macAddress
@@ -164,23 +164,16 @@ function Get-MAC {
 
 # Function to generate random MAC address
 function Generate-MAC {
-	$hexChars = "0123456789ABCDEF`AE26"
-	$macAddress = ""
-
-	for ($i = 1; $i -le 11; $i++) {
-		$randomIndex = Get-Random -Minimum 0 -Maximum 16
-		$macAddress += $hexChars[$randomIndex]
-	}
-
-	$randomIndex = Get-Random -Minimum 17 -Maximum 21
-	$macAddress = $macAddress.Substring(0, 1) + $hexChars[$randomIndex] + $macAddress.Substring(1)
-	return $macAddress
+    $randomMac = ('{0:X}' -f (Get-Random 0xFFFFFFFFFFFF)).PadLeft(12, "0")
+    $replacementChar = Get-Random -InputObject @('A', 'E', '2', '6')
+    $randomMac = $randomMac.Substring(0, 1) + $replacementChar + $randomMac.Substring(2)
+    return $randomMac
 }
 
 
 # Function to retrieve NIC index
 function Get-NICIndex {
-	$nicCaption = (Get-WmiObject -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionId -eq $NetworkAdapter }).Caption
+	$nicCaption = (Get-WmiObject -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionId -eq "$NetworkAdapter" }).Caption
 	$nicIndex = $nicCaption -replace ".*\[", "" -replace "\].*"
 	$nicIndex = $nicIndex.Substring($nicIndex.Length - 4)
 	return $nicIndex
