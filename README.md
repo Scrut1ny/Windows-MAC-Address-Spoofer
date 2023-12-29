@@ -37,3 +37,7 @@ Research (links):
 
 
 https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/86b4c1e9-baec-4a6f-b78a-0b5c172c9dd6
+
+
+> [!Pro-Tip]
+> Just Download [Executable file](https://raw.githubusercontent.com/AmmarSAA/Windows-MAC-Address-Spoofer/main/MAC%20Address%20Spoofer.exe) and run it.
