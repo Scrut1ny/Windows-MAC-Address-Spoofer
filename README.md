@@ -40,4 +40,4 @@ https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/86b4c1e9
 
 
 > [!TIP]
-> Just Download [Executable file](https://raw.githubusercontent.com/AmmarSAA/Windows-MAC-Address-Spoofer/main/MAC%20Address%20Spoofer.exe) and run it.
+> Just Download [Executable file](https://raw.githubusercontent.com/Scrut1ny/Windows-MAC-Address-Spoofer/main/MAC%20Address%20Spoofer.exe) and run it.
