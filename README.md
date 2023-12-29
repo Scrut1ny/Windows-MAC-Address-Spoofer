@@ -41,3 +41,4 @@ https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/86b4c1e9
 
 > [!TIP]
 > Just Download [Executable file](https://raw.githubusercontent.com/Scrut1ny/Windows-MAC-Address-Spoofer/main/MAC%20Address%20Spoofer.exe) and run it.
+> VirusTotal - [Link](https://www.virustotal.com/gui/file/f84a06af306bf2f17253f02aac98a7be022f4ef0054912e6bb253643ec8ebb98/detection)
