@@ -27,7 +27,7 @@ function Selection-Menu {
 	Clear-Host; Write-Host "`n  [104;97m[i][0m Input NIC # to modify.`n"
 	
 	$counter = 0
-	$nic = Get-WmiObject Win32_NetworkAdapter | Where-Object {$_.NetConnectionID -ne $null} | ForEach-Object {
+	$nic = Get-CimInstance Win32_NetworkAdapter | Where-Object {$_.NetConnectionID -ne $null} | ForEach-Object {
 		$counter++
 		Write-Host "  $counter - $($_.NetConnectionID)"
 		$_.NetConnectionID
@@ -155,7 +155,7 @@ function Get-MAC {
 	$macAddress = (Get-ItemProperty -Path "$regPath\$nicIndex" -Name "NetworkAddress" -ErrorAction SilentlyContinue).NetworkAddress
 
 	if (-not $macAddress) {
-		$macAddress = (Get-WmiObject -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionId -eq "$NetworkAdapter" }).MacAddress
+		(Get-CimInstance -ClassName Win32_NetworkAdapter | Where-Object { $_.NetConnectionId -eq "$NetworkAdapter" }).MacAddress
 	}
 
 	return $macAddress
@@ -173,7 +173,7 @@ function Generate-MAC {
 
 # Function to retrieve NIC index
 function Get-NICIndex {
-	$nicCaption = (Get-WmiObject -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionId -eq "$NetworkAdapter" }).Caption
+	$nicCaption = (Get-CimInstance -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionId -eq "$NetworkAdapter" }).Caption
 	$nicIndex = $nicCaption -replace ".*\[", "" -replace "\].*"
 	$nicIndex = $nicIndex.Substring($nicIndex.Length - 4)
 	return $nicIndex
