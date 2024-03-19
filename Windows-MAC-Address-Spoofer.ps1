@@ -1,12 +1,10 @@
-#####################################################################################################
-#																									#
-# File Name: Windows-MAC-Address-Spoofer.ps1	# Output:											#
-# Author: Ammar S.A.A							# Changes the MAC address of the active				#
-# Version: 1.4									# network adapter on Windows via registry.			#
-#																									#
-#####################################################################################################
-#						https://github.com/ammarsaa/Windows-MAC-Address-Spoofer						#
-#####################################################################################################
+# ==================================================
+#  Windows-MAC-Address-Spoofer v2.0
+# ==================================================
+#  Devs - Scut1ny & Ammar S.A.A
+#  Help - 
+#  Link - https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer
+# ==================================================
 
 
 # Check for admin rights
@@ -162,21 +160,21 @@ function Get-MAC {
 }
 
 
-# Function to generate random MAC address
-function Generate-MAC {
-    $randomMac = ('{0:X}' -f (Get-Random 0xFFFFFFFFFFFF)).PadLeft(12, "0")
-    $replacementChar = Get-Random -InputObject @('A', 'E', '2', '6')
-    $randomMac = $randomMac.Substring(0, 1) + $replacementChar + $randomMac.Substring(2)
-    return $randomMac
-}
-
-
 # Function to retrieve NIC index
 function Get-NICIndex {
 	$nicCaption = (Get-CimInstance -Class Win32_NetworkAdapter | Where-Object { $_.NetConnectionId -eq "$NetworkAdapter" }).Caption
 	$nicIndex = $nicCaption -replace ".*\[", "" -replace "\].*"
 	$nicIndex = $nicIndex.Substring($nicIndex.Length - 4)
 	return $nicIndex
+}
+
+
+# Function to generate random MAC address
+function Generate-MAC {
+    $randomMac = ('{0:X}' -f (Get-Random 0xFFFFFFFFFFFF)).PadLeft(12, "0")
+    $replacementChar = Get-Random -InputObject @('A', 'E', '2', '6')
+    $randomMac = $randomMac.Substring(0, 1) + $replacementChar + $randomMac.Substring(2)
+    return $randomMac
 }
 
 
