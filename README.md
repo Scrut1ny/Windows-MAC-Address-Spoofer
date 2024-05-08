@@ -1,45 +1,29 @@
-> [!IMPORTANT]
-> Next update adds manually setting a custom MAC Address for a selected NIC!
+# Windows MAC Address Spoofer
 
-MAC address spoofing is a technique used to alter the unique identifier assigned to a network interface controller (NIC) on a device. Each NIC has a Media Access Control (MAC) address assigned by the manufacturer, which serves as a unique identifier for that device on a network. By altering the MAC address of a device, a user can effectively conceal their true identity on the network, allowing them to operate anonymously or circumvent network restrictions. This can be accomplished through the use of specialized software or manually by modifying the device's network settings.
+This is a Windows Batch script that allows you to manage the MAC addresses of your network interfaces. It provides options to spoof the MAC address with a random one, revert to the original MAC address, or set a custom MAC address. This script was inspired by the work of Scrut1ny.
 
-Research (links):
-- General technical knowledge
-  - https://wikipedia.org/wiki/MAC_address
-- CurrentControlSet differences
-  - https://stackoverflow.com/questions/291519/how-does-currentcontrolset-differ-from-controlset001-and-controlset002
-  - https://superuser.com/questions/241426/what-are-the-differences-between-the-multiple-controlsets-in-the-windows-registr
-- Issues With Windows 7 Wireless NIC & Workaround
-  - https://blog.technitium.com/2011/05/tmac-issue-with-wireless-network.html
+## How it Works
 
-> [!NOTE]
-> In the Windows Registry, the key `HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}` plays a vital role in managing and storing information related to network adapters. Each subkey within this class corresponds to a specific network adapter installed on the system.
->
-> Class Identifier (CLSID):
-> The `{4d36e972-e325-11ce-bfc1-08002be10318}` portion of the key is a `Class Identifier (CLSID)` associated with the "Network Adapters" class in the Windows Device Manager.
->
-> Subkeys and Indices:
-> Under this class key, you'll find subkeys with numerical indices, each representing a different network adapter also called a Index (from a Caption). For example, `HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0000` represents the first network adapter.
->
-> Some Key Values:
-> - `NetCfgInstanceId`: Contains a unique identifier for the network adapter.
-> - `DriverDesc`: Provides a human-readable description or name of the network adapter.
-> - `NetworkAddress`: Stores the MAC address of the network adapter.
+1. **Check for Admin Rights:** The script first checks if it has administrator privileges, which are necessary for modifying network settings. If not, it requests for them.
 
-> [!NOTE]
-> Retrieving & displaying captions from NICs
-![image](https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/982813d4-da4d-4631-84c6-f9480c1dcff9)
+2. **Selection Menu:** The script then enumerates all the Network Interface Controllers (NICs) on your system and displays them in a list. You can select the NIC you want to modify by entering its corresponding number.
 
-> [!NOTE]
-> Showing registry subkeys (aka Indexes from a Caption) under the CLSID.
-![image](https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/02dc8ed8-1bd9-43d4-8cd1-464da63a5b43)
+3. **Action Menu:** After a NIC is selected, the script displays a list of actions you can perform: spoof the MAC address, revert to the original MAC address, or set a custom MAC address. You can select the action you want to perform by entering its corresponding number.
 
+4. **Perform Action:** Depending on your selection, the script will perform the corresponding action:
 
+   - **Spoof MAC:** The script generates a random MAC address and assigns it to the selected NIC.
+   - **Revert to Original MAC:** The script removes the custom MAC address from the selected NIC, causing it to revert to its original MAC address.
+   - **Set Custom MAC:** The script prompts you to enter a custom MAC address, which it then assigns to the selected NIC.
 
-https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer/assets/53458032/86b4c1e9-baec-4a6f-b78a-0b5c172c9dd6
+After performing the action, the script returns to the Selection Menu, allowing you to perform actions on other NICs or the same NIC again.
 
+## Usage
 
-> [!TIP]
-> Just Download [Executable file](https://raw.githubusercontent.com/Scrut1ny/Windows-MAC-Address-Spoofer/main/MAC%20Address%20Spoofer.exe) and run it.
-> 
-> [VirusTotal](https://www.virustotal.com/gui/file/f84a06af306bf2f17253f02aac98a7be022f4ef0054912e6bb253643ec8ebb98/detection)
+To use this script, simply run it in a command prompt with administrator privileges. Follow the prompts to select a NIC and perform an action on it.
+
+Please note that this script modifies system settings and should be used responsibly. Always ensure that you have the necessary permissions to modify network settings on your computer or network.
+
+## Credits
+
+This script was inspired by the work of [Scrut1ny](https://github.com/Scrut1ny).
