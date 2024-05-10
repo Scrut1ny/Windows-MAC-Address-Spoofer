@@ -16,7 +16,7 @@ mode con:cols=66 lines=25
 :: Check for admin rights
 net session >nul 2>&1
 if %errorlevel% neq 0 (
-    echo( && echo   [36m# Administrator privileges are required. && echo([0m
+    echo( && echo   [33m# Administrator privileges are required. && echo([0m
     runas /user:Administrator "%~0" %*
     exit /b
 )
