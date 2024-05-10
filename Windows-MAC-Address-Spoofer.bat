@@ -185,7 +185,7 @@ exit /b
 :MAC_RECIEVE
 call :NIC_INDEX
 
-:: Always retrieve the MAC address from the wmic command
+:: An unaltered MAC address will not be present in the registry. As a result, we retrieve it via WMIC.
 for /f "tokens=2 delims==" %%A in ('wmic nic where "Index='!Index!'" get MacAddress /format:value ^| find "MACAddress"') do (
     set "MAC=%%A"
 )
