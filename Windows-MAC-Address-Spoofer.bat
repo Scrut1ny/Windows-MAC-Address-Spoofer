@@ -39,6 +39,7 @@ for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get NetConnectionId /format:
 )
 :: Receive user selection
 echo( && echo   [36m99[0m - Revise Networking && echo(
+echo>nul|clip
 set /p "nic_selection=.  [35m# [0m"
 set /a "nic_selection=nic_selection"
 if !nic_selection! GTR 0 (
@@ -65,6 +66,7 @@ echo   [36m1[0m - Randomize MAC address
 echo   [36m2[0m - Customize MAC address
 echo   [36m3[0m - Revert MAC address to original
 echo( && echo   [36m0[0m ^< Menu && echo(
+echo>nul|clip
 set /p c=".  [35m#[0m "
 if %c%==1 goto :SPOOF_MAC
 if %c%==2 goto :CUSTOM_MAC
@@ -97,6 +99,7 @@ echo   [36m^> Current MAC  :[0m !MAC! && echo(
 :: Ask for the custom MAC address
 echo   [35m[i] Enter a custom MAC address (exclude colons).
 echo   Remember, only use hex characters: 0-9 A-F[0m && echo(
+echo>nul|clip
 set /p "mac_address=.  [35m#[0m "
 
 rem Check if MAC address is empty or not exactly 12 characters or contains invalid characters
