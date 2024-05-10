@@ -2,6 +2,18 @@
 
 MAC address spoofing is a method that changes the unique identifier, known as the Media Access Control (MAC) address, assigned to a network interface controller (NIC) on a device. Each NIC has a MAC address assigned by the manufacturer, which uniquely identifies the device on a network. By changing the MAC address, users can hide their actual identity on the network, enabling anonymous operation or bypassing network restrictions. This can be achieved either through specific software or by manually adjusting the device's network settings.
 
+## How it Works
+
+1. **Check for Admin Rights:** The script first checks if it has administrator privileges, which are necessary for modifying network settings. If not, it requests for them.
+2. **Selection Menu:** The script then enumerates all the Network Interface Controllers (NICs) on your system and displays them in a list. You can select the NIC you want to modify by entering its corresponding number.
+3. **Action Menu:** After a NIC is selected, the script displays a list of actions you can perform: spoof the MAC address, revert to the original MAC address, or set a custom MAC address. You can select the action you want to perform by entering its corresponding number.
+4. **Perform Action:** Depending on your selection, the script will perform the corresponding action:
+   - **Spoof MAC:** The script generates a random MAC address and assigns it to the selected NIC.
+   - **Revert to Original MAC:** The script removes the custom MAC address from the selected NIC, causing it to revert to its original MAC address.
+   - **Set Custom MAC:** The script prompts you to enter a custom MAC address, which it then assigns to the selected NIC.
+
+After performing the action, the script returns to the Selection Menu, allowing you to perform actions on other NICs or the same NIC again.
+
 ## Further Reading
 - [General technical knowledge](https://wikipedia.org/wiki/MAC_address)
 - [Differences between CurrentControlSet, ControlSet001, and ControlSet002](https://stackoverflow.com/questions/291519/how-does-currentcontrolset-differ-from-controlset001-and-controlset002)
