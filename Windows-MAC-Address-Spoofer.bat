@@ -115,10 +115,10 @@ if "%mac_address%"=="" (
     for /l %%i in (0,1,11) do (
         set "char=!mac_address:~%%i,1!"
         echo !valid_chars!| find "!char!" >nul || (
-            echo Invalid entry; MAC address must contain only hexadecimal characters.
-			cls && echo( && echo   [31m[!] Invalid entry; MAC address must contain
-			echo      only hexadecimal characters.[0m && >nul timeout /t 4 && goto :CUSTOM_MAC
-            goto :eof
+		echo Invalid entry; MAC address must contain only hexadecimal characters.
+		cls && echo( && echo   [31m[!] Invalid entry; MAC address must contain
+		echo      only hexadecimal characters.[0m && >nul timeout /t 4 && goto :CUSTOM_MAC
+		goto :eof
         )
     )
 )
@@ -127,9 +127,9 @@ if "%mac_address%"=="" (
 set "mac_address_print=!mac_address:~0,2!:!mac_address:~2,2!:!mac_address:~4,2!:!mac_address:~6,2!:!mac_address:~8,2!:!mac_address:~10,2!"
 echo( && echo   [36m^> Modified MAC :[0m !mac_address_print!
 >nul 2>&1 (
-    netsh interface set interface "!NetworkAdapter!" admin=disable
-    reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!mac_address!" /f
-    netsh interface set interface "!NetworkAdapter!" admin=enable
+	netsh interface set interface "!NetworkAdapter!" admin=disable
+	reg add "!reg_path!\!Index!" /v "NetworkAddress" /t REG_SZ /d "!mac_address!" /f
+	netsh interface set interface "!NetworkAdapter!" admin=enable
 )
 
 echo( && echo   [35m# Press any key to continue...[0m && >nul pause && goto :ACTION_MENU
@@ -144,9 +144,9 @@ echo   [36m^> Modified MAC :[0m !MAC! && echo(
 :: Save the current MAC address
 set "SavedMAC=!MAC!"
 >nul 2>&1 (
-    netsh interface set interface "!NetworkAdapter!" admin=disable
-    reg delete "!reg_path!\!Index!" /v "NetworkAddress" /f
-    netsh interface set interface "!NetworkAdapter!" admin=enable
+	netsh interface set interface "!NetworkAdapter!" admin=disable
+	reg delete "!reg_path!\!Index!" /v "NetworkAddress" /f
+	netsh interface set interface "!NetworkAdapter!" admin=enable
 	powershell Restart-Service -Force -Name "winmgmt"
 )
 
@@ -161,7 +161,6 @@ if "!SavedMAC!"=="!MAC!" (
     echo   [35m[i] MAC address successfully reverted to original.[0m
 )
 echo( && echo   [35m# Press any key to continue...[0m && >nul pause && goto :ACTION_MENU
-
 exit /b
 
 
