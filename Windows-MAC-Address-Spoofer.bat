@@ -1,9 +1,9 @@
 :: ==================================================
 ::  Windows-MAC-Address-Spoofer v9.0
 :: ==================================================
-::  Dev  - Scut1ny
-::  Help - Mathieu, Sintrode, mustafachyi
-::  Link - https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer
+::  Developer: Scrut1ny
+::  Contributors: Mathieu, Sintrode, Mustafachyi
+::  https://github.com/Scrut1ny/Windows-MAC-Address-Spoofer
 :: ==================================================
 
 
