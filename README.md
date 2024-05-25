@@ -1,4 +1,7 @@
-# MAC Address Spoofing
+# Program Show
+file:///home/null/Videos/output.gif
+
+## MAC Address Spoofing
 
 MAC address spoofing is a method that changes the unique identifier, known as the Media Access Control (MAC) address, assigned to a network interface controller (NIC) on a device. Each NIC has a MAC address assigned by the manufacturer, which uniquely identifies the device on a network. By changing the MAC address, users can hide their actual identity on the network, enabling anonymous operation or bypassing network restrictions. This can be achieved either through specific software or by manually adjusting the device's network settings.
 
