@@ -99,7 +99,7 @@ echo( && echo   [36m^> Modified MAC :[0m !mac_address_print!
 call :APPLY_MAC
 call :PAUSE_CONTINUE && goto :ACTION_MENU
 
-: REVERT_MAC
+:REVERT_MAC
 cls && echo( && call :MAC_RECEIVE && call :NIC_INDEX
 echo   [36m^> Selected NIC :[0m !NetworkAdapter! && echo(
 echo   [36m^> Modified MAC :[0m !MAC! && echo(
@@ -166,4 +166,5 @@ exit /b
 
 :PAUSE_CONTINUE
 echo( && echo   [35m# Press any key to continue...[0m && >nul pause
+
 exit /b
