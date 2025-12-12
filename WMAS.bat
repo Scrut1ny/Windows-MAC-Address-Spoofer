@@ -70,7 +70,7 @@ call :APPLY_MAC
 echo( && echo   [35m[i] MAC address successfully spoofed.[0m
 call :PAUSE_CONTINUE && goto :ACTION_MENU
 
-: CUSTOM_MAC
+:CUSTOM_MAC
 cls && echo( && call :MAC_RECEIVE && call :NIC_INDEX
 echo   [36m^> Selected NIC :[0m !NetworkAdapter! && echo(
 echo   [36m^> Current MAC  :[0m !MAC! && echo(
