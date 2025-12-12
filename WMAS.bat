@@ -13,7 +13,7 @@ mode con:cols=66 lines=25
 
 :: Administrator?
 net session >nul 2>&1 || (
-    echo( && echo   [33m# Administrator privileges are required. && echo([0m
+    echo( & echo   [33m# Administrator privileges are required. & echo([0m
     runas /user:Administrator "%~0" %*
     exit /b
 )
@@ -23,7 +23,7 @@ set "reg_path=HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bf
 
 :SELECTION_MENU
 set "count=0"
-cls && echo( && echo   [35m[i] Input NIC # to modify.[0m && echo(
+cls & echo( & echo   [35m[i] Input NIC # to modify.[0m & echo(
 for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get NetConnectionId /format:csv') do (
     for /f "delims=" %%B in ("%%~A") do (
         set /a "count+=1"
@@ -31,12 +31,12 @@ for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get NetConnectionId /format:
         echo   [36m!count![0m - %%B
     )
 )
-echo( && echo   [36m99[0m - Revise Networking && echo(
+echo( & echo   [36m99[0m - Revise Networking & echo(
 set /p "nic_selection=.  [35m# [0m"
 set /a "nic_selection=nic_selection"
 
 if !nic_selection! EQU 99 (
-    cls && echo( && echo   [32m# Revising networking configurations...[0m
+    cls & echo( & echo   [32m# Revising networking configurations...[0m
     ipconfig /release >nul 2>&1 && arp -d * >nul 2>&1 && ipconfig /renew >nul 2>&1
     goto :SELECTION_MENU
 )
@@ -47,12 +47,12 @@ if !nic_selection! GTR 0 if !nic_selection! LEQ !count! (
 call :SHOW_ERROR "Option '!nic_selection!' is invalid." && goto :SELECTION_MENU
 
 :ACTION_MENU
-cls && echo( && echo   [35m[i] Input action # to perform.[0m && echo(
-echo   [36m^> Selected NIC :[0m !NetworkAdapter! && echo(
+cls & echo( & echo   [35m[i] Input action # to perform.[0m & echo(
+echo   [36m^> Selected NIC :[0m !NetworkAdapter! & echo(
 echo   [36m1[0m - Randomize MAC address
 echo   [36m2[0m - Customize MAC address
 echo   [36m3[0m - Revert MAC address to original
-echo( && echo   [36m0[0m ^< Menu && echo(
+echo( & echo   [36m0[0m ^< Menu & echo(
 set /p "c=.  [35m#[0m "
 if "%c%"=="1" goto :SPOOF_MAC
 if "%c%"=="2" goto :CUSTOM_MAC
@@ -61,20 +61,20 @@ if "%c%"=="0" goto :SELECTION_MENU
 call :SHOW_ERROR "Option '%c%' is invalid." && goto :ACTION_MENU
 
 :SPOOF_MAC
-cls && echo( && call :MAC_RECEIVE && call :GEN_MAC && call :NIC_INDEX
-echo   [36m^> Selected NIC :[0m !NetworkAdapter! && echo(
-echo   [36m^> Previous MAC :[0m !MAC! && echo(
+cls & echo( && call :MAC_RECEIVE && call :GEN_MAC && call :NIC_INDEX
+echo   [36m^> Selected NIC :[0m !NetworkAdapter! & echo(
+echo   [36m^> Previous MAC :[0m !MAC! & echo(
 echo   [36m^> Modified MAC :[0m !mac_address_print!
 call :APPLY_MAC
-echo( && echo   [35m[i] MAC address successfully spoofed.[0m
+echo( & echo   [35m[i] MAC address successfully spoofed.[0m
 call :PAUSE_CONTINUE && goto :ACTION_MENU
 
 :CUSTOM_MAC
-cls && echo( && call :MAC_RECEIVE && call :NIC_INDEX
-echo   [36m^> Selected NIC :[0m !NetworkAdapter! && echo(
-echo   [36m^> Current MAC  :[0m !MAC! && echo(
+cls & echo( && call :MAC_RECEIVE && call :NIC_INDEX
+echo   [36m^> Selected NIC :[0m !NetworkAdapter! & echo(
+echo   [36m^> Current MAC  :[0m !MAC! & echo(
 echo   [35m[i] Enter a custom MAC address (exclude colons).
-echo   Remember, only use hex characters: 0-9 A-F[0m && echo(
+echo   Remember, only use hex characters: 0-9 A-F[0m & echo(
 set /p "mac_address=.  [35m#[0m "
 
 :: Validate MAC address
@@ -95,23 +95,23 @@ if "!valid!"=="0" (
 )
 
 call :FORMAT_MAC
-echo( && echo   [36m^> Modified MAC :[0m !mac_address_print!
+echo( & echo   [36m^> Modified MAC :[0m !mac_address_print!
 call :APPLY_MAC
 call :PAUSE_CONTINUE && goto :ACTION_MENU
 
 :REVERT_MAC
-cls && echo( && call :MAC_RECEIVE && call :NIC_INDEX
-echo   [36m^> Selected NIC :[0m !NetworkAdapter! && echo(
-echo   [36m^> Modified MAC :[0m !MAC! && echo(
+cls & echo( && call :MAC_RECEIVE && call :NIC_INDEX
+echo   [36m^> Selected NIC :[0m !NetworkAdapter! & echo(
+echo   [36m^> Modified MAC :[0m !MAC! & echo(
 set "SavedMAC=!MAC!"
 >nul 2>&1 (
     netsh interface set interface "!NetworkAdapter!" admin=disable
     reg delete "!reg_path!\!Index!" /v "NetworkAddress" /f
     netsh interface set interface "!NetworkAdapter!" admin=enable
-    powershell Restart-Service -Force -Name "winmgmt"
+    powershell -NoProfile -Command "Restart-Service -Force -Name winmgmt"
 )
 call :MAC_RECEIVE
-echo   [36m^> Reverted MAC :[0m !MAC! && echo(
+echo   [36m^> Reverted MAC :[0m !MAC! & echo(
 if "!SavedMAC!"=="!MAC!" (
     echo   [35m[i] Original MAC address already set.[0m
 ) else (
@@ -158,13 +158,14 @@ exit /b
 exit /b
 
 :SHOW_ERROR
-cls && echo( && echo   [31m[i] %~1[0m
+cls & echo( & echo   [31m[i] %~1[0m
 set "delay=%~2"
 if "%delay%"=="" set "delay=2"
 >nul timeout /t %delay%
 exit /b
 
 :PAUSE_CONTINUE
-echo( && echo   [35m# Press any key to continue...[0m && >nul pause
+echo( & echo   [35m# Press any key to continue...[0m && >nul pause
 
 exit /b
+
