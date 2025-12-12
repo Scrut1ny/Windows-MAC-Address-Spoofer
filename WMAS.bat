@@ -22,7 +22,6 @@ net session >nul 2>&1 || (
 set "reg_path=HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}"
 
 :SELECTION_MENU
-::  Enumerate active available NICs
 set "count=0"
 cls && echo( && echo   [35m[i] Input NIC # to modify.[0m && echo(
 for /f "skip=2 tokens=2 delims=," %%A in ('wmic nic get NetConnectionId /format:csv') do (
